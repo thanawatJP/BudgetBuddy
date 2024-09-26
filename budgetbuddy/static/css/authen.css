@@ -20,7 +20,7 @@ h4 {
   color: #333;
 }
 
-.item {
+.item, form {
   display: flex;
   flex-direction: column;
   gap: 10px;

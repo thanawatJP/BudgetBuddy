@@ -6,26 +6,72 @@
 <h4>Register</h4>
 <hr />
 <div class="item">
-    <form method="POST" action="{% url 'login' %}">
+    <form method="POST" action="{% url 'register' %}">
         {% csrf_token %}
+
+        <div>
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" required>
+        </div>
         <div>
             <label for="username">Username</label>
+            {% if form.errors %}
+            <input type="text" id="username" name="username" required style="border-color: red;">
+            <div style="color: red;">
+                {% for field, errors in form.errors.items %}
+                {% if field|stringformat:"s" == "username" %}
+                {% for error in errors %}
+                {{ error }}
+                {% endfor %}
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% else %}
             <input type="text" id="username" name="username" required>
+            {% endif %}
         </div>
         <div>
             <label for="password1">Password</label>
             <input type="password" id="password1" name="password1" required>
         </div>
         <div>
-            <label for="password2">Password</label>
+            <label for="password2">Confirm Password</label>
+            {% comment %} <input type="password" id="password2" name="password2" required> {% endcomment %}
+            {% if form.errors %}
+            <input type="password" id="password2" name="password2" required style="border-color: red;">
+                <div style="color: red;">
+                    {% for field, errors in form.errors.items %}
+                        {% if field|stringformat:"s" == "password2" %}
+                            {% for error in errors %}
+                                {{ error }}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
             <input type="password" id="password2" name="password2" required>
+            {% endif %}
         </div>
+        
         <button type="submit" style="margin-top: 20px;">Register</button>
     </form>
     <hr />
     <a href="{% url 'login' %}">Already have an account?</a>
 </div>
 {% endblock %}
+
+{% comment %} {% if form.errors %}
+    <div style="color: red;">
+        {% for field, errors in form.errors.items %}
+            {% if field|stringformat:"s" == "username" %}
+                {% for error in errors %}
+                    {{ error }}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %} {% endcomment %}
+
 
 <!-- <label for="username">Email Address</label>
 <input type="text" id="Email" />
