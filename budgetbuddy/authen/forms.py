@@ -14,6 +14,15 @@ class RegisterationForm(UserCreationForm):
             "password1",
             "password2",
         ]
+    
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        user_count = User.objects.filter(email=email).count()
+        if user_count > 0:
+            msg = "Your email have been use"
+            self.add_error("email", msg)
+
+        return email
 
 class ResetpasswordForm(SetPasswordForm):
     # email = forms.CharField()

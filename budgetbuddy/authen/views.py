@@ -18,6 +18,7 @@ class LoginView(View):
             login(request,user)
             return redirect('home')
 
+        print(form.cleaned_data)
         return render(request,'login.html', {"form":form})
 
 

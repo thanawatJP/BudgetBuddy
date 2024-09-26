@@ -8,10 +8,22 @@
 <div class="item">
     <form method="POST" action="{% url 'register' %}">
         {% csrf_token %}
-
         <div>
             <label for="email">Email</label>
+            {% if form.errors %}
+            <input type="text" id="email" name="email" required style="border-color: red;">
+            <div style="color: red;">
+                {% for field, errors in form.errors.items %}
+                    {% if field|stringformat:"s" == "email" %}
+                        {% for error in errors %}
+                            {{ error }}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% else %}
             <input type="text" id="email" name="email" required>
+            {% endif %}
         </div>
         <div>
             <label for="username">Username</label>
@@ -19,11 +31,11 @@
             <input type="text" id="username" name="username" required style="border-color: red;">
             <div style="color: red;">
                 {% for field, errors in form.errors.items %}
-                {% if field|stringformat:"s" == "username" %}
-                {% for error in errors %}
-                {{ error }}
-                {% endfor %}
-                {% endif %}
+                    {% if field|stringformat:"s" == "username" %}
+                        {% for error in errors %}
+                            {{ error }}
+                        {% endfor %}
+                    {% endif %}
                 {% endfor %}
             </div>
             {% else %}
@@ -36,7 +48,6 @@
         </div>
         <div>
             <label for="password2">Confirm Password</label>
-            {% comment %} <input type="password" id="password2" name="password2" required> {% endcomment %}
             {% if form.errors %}
             <input type="password" id="password2" name="password2" required style="border-color: red;">
                 <div style="color: red;">

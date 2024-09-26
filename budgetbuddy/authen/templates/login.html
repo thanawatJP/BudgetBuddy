@@ -31,7 +31,9 @@
     </form>
 
     <hr />
-    <a href="{% url 'forgot-pass' %}">Forgot Password?</a>
+    {% comment %} <a href="{% url 'forgot-pass' %}">Forgot Password?</a> {% endcomment %}
+    <a href="{% url 'password_reset' %}">Forgot Password?</a>
+    
     <a href="{% url 'register' %}">Register</a>
 
 </div>
