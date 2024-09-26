@@ -1,23 +1,22 @@
 from django.contrib.auth import logout, login
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 
 class LoginView(View):
     def get(self, request):
-        return render(request, 'login.html')
-        # form = AuthenticationForm()
-        # return render(request, 'login.html', {"form": form})
+        form = AuthenticationForm()
+        return render(request, 'login.html', {"form": form})
     
-    # def post(self, request):
-    #     form = AuthenticationForm(data=request.POST)
-    #     if form.is_valid():
-    #         user = form.get_user() 
-    #         login(request,user)
-    #         return redirect('booking-list')  
+    def post(self, request):
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user() 
+            login(request,user)
+            return redirect('login')
 
-    #     return render(request,'login.html', {"form":form})
+        return render(request,'login.html', {"form":form})
 
 
 class LogoutView(View):
@@ -27,7 +26,17 @@ class LogoutView(View):
     
 class RegisterView(View):
     def get(self, request):
-        return render(request, 'register.html')
+        form = UserCreationForm()
+        return render(request, 'register.html', {"form": form})
+
+    def post(self, request):
+        form = UserCreationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user() 
+            login(request,user)
+            return redirect('login')
+
+        return render(request,'login.html', {"form":form})
     
 class ForgotpasswordView(View):
     def get(self, request):

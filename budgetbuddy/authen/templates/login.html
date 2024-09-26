@@ -1,30 +1,51 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <title>LogIn</title>
-  </head>
-  <body>
-    <div class="container">
-      <h4>Sign In</h4>
-      <hr />
-      <div class="item">
-        <label for="username">Username or Email Address</label>
-        <input type="text" id="username" />
-        <label for="password">Password</label>
-        <input type="password" id="password" />
-        <div class="checkbox-container">
-          <input type="checkbox" id="remember-me" />
-          <label for="remember-me">Remember Me</label>
+{% extends 'baseLogin.html' %}
+
+{% block title %}LogIn{% endblock %}
+
+{% block content %}
+<h4>Sign In</h4>
+<hr />
+<div class="item">
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div style="color: red;">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            {{ error }}
+            {% endfor %}
+            {% endfor %}
         </div>
-        <button>Log In</button>
-        <hr />
-        <a href="{% url 'forgot-pass' %}">Forgot Password?</a>
-        <a href="{% url 'register' %}">Register</a>
-      </div>
-    </div>
-  </body>
-</html>
+        {% endif %}
+
+        <div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Log In</button>
+    </form>
+
+    <hr />
+    <a href="{% url 'forgot-pass' %}">Forgot Password?</a>
+    <a href="{% url 'register' %}">Register</a>
+
+</div>
+{% endblock %}
+
+<!-- <label for="username">Username or Email Address</label>
+<input type="text" id="username" />
+<label for="password">Password</label>
+<input type="password" id="password" />
+<div class="checkbox-container">
+    <input type="checkbox" id="remember-me" />
+    <label for="remember-me">Remember Me</label>
+</div>
+<button>Log In</button>
+<hr />
+<a href="{% url 'forgot-pass' %}">Forgot Password?</a>
+<a href="{% url 'register' %}">Register</a> -->
