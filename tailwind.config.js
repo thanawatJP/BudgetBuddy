@@ -5,7 +5,11 @@ module.exports = {
     './budgetbuddy/account/templates/**/*.html'
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'custom-green': '#55c172'
+      }
+    },
   },
   plugins: [],
 }
