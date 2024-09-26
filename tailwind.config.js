@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./**/*.html'],
+  content: [
+    './budgetbuddy/authen/templates/**/*.html', 
+    './budgetbuddy/account/templates/**/*.html'
+  ],
   theme: {
     extend: {},
   },
