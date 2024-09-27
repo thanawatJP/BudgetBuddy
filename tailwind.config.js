@@ -2,7 +2,8 @@
 module.exports = {
   content: [
     './budgetbuddy/authen/templates/**/*.html', 
-    './budgetbuddy/account/templates/**/*.html'
+    './budgetbuddy/account/templates/**/*.html',
+    './temp/frontend/**/*.html'
   ],
   theme: {
     extend: {
