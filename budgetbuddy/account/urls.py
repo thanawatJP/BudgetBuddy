@@ -8,5 +8,6 @@ urlpatterns = [
     path('addBudget/', AddBudgetView.as_view(), name="addBudget"),
     path('editBudget/', EditBudgetView.as_view(), name="editBudget"),
     path('saving/', SavingView.as_view(), name="saving"),
+    path('addSaving/', AddSavingView.as_view(), name="addSaving"),
 
 ]

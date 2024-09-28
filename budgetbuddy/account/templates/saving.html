@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Bugget{% endblock %}
+{% block title %}Saving{% endblock %}
 
 {% block content %}
  
@@ -11,23 +11,41 @@
                 <a href="{% url 'home' %}" class="text-gray-400 hover:text-gray-600 font-medium">BudgetBuddy</a>
             </li>
             <li class="text-gray-600 mr-2 font-medium">/</li>
-            <li class="text-gray-600 mr-2 font-medium">Budget</li>
+            <li class="text-gray-600 mr-2 font-medium">Saving</li>
         </ul>
     </div>
     <div class="p-4 flex justify-end">
-        <a href="{% url 'addBudget' %}">
+        <a href="{% url 'addSaving' %}">
             <button type="button" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
                 <i class="ri-pencil-line"></i>
                 Add New
             </button>
         </a>
     </div>
+    {% comment %} if no budget create {% endcomment %}
+    {% comment %} <div class="relative text-2xl w-full flex justify-center h-screen items-center">
+        <div class="absolute inset-0 flex justify-center items-center">
+            <svg viewBox="-0.5 -0.5 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" id="Piggy-Bank--Streamline-Iconoir" height="128" width="128">
+                <desc>Piggy Bank Streamline Icon: https://streamlinehq.com</desc>
+                <path d="M9.651250000000001 4.99025c-0.559875 -0.145125 -1.3378124999999998 -0.3585625 -1.9614375000000002 -0.3585625 -3.0750624999999996 0 -5.567875 1.912875 -5.567875 4.2725625 0 1.3559999999999999 0.8231875 2.564375 2.1069375 3.347125l-0.34781249999999997 1.1471875c-0.08375 0.2763125 0.123 0.555125 0.41175000000000006 0.555125h1.2650000000000001c0.093125 0 0.18375 -0.030187500000000003 0.2581875 -0.08612500000000001l1.0000625 -0.7505000000000001h1.7474375l1 0.7505000000000001c0.0745 0.0559375 0.1651875 0.08612500000000001 0.2583125 0.08612500000000001h1.2650000000000001c0.2886875 0 0.49549999999999994 -0.2788125 0.41162499999999996 -0.555125l-0.34775 -1.1471875c0.7648125 -0.4663125 1.3661875 -1.08375 1.7273749999999999 -1.7934375" stroke="#e5e7eb" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path>
+                <path d="m9.651250000000001 4.99025 3.2268125 -1.075625 -0.06025 2.60175 1.494375 0.6250625v2.5098125l-1.381 0.7170624999999999" stroke="#e5e7eb" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path><path d="M10.368312500000002 8.217062499999999c-0.198 0 -0.3585625 -0.1605625 -0.3585625 -0.3585S10.170312500000001 7.5 10.368312500000002 7.5s0.3585 0.1605625 0.3585 0.3585625 -0.1605625 0.3585 -0.3585 0.3585Z" fill="#000000" stroke="#e5e7eb" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path>
+                <path d="M0.6878125 6.065874999999999s0 1.7209374999999998 1.4341249999999999 2.1511875" stroke="#e5e7eb" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path>
+                <path d="M8.43275 4.4545625c0.0925 -0.2665 0.142875 -0.5533125 0.142875 -0.8520625 0 -1.41175 -1.1236875 -2.5561875 -2.50975 -2.5561875S3.5561249999999998 2.19075 3.5561249999999998 3.6025c0 0.67525 0.25706249999999997 1.2893124999999999 0.6769375 1.74625" stroke="#e5e7eb" stroke-linejoin="round" stroke-width="1"></path>
+            </svg>
+        </div>
+        <span class="relative text-gray-400 px-4 py-2 z-10">
+            กด Add New เพื่อสร้าง Saving ใหม่เพื่อตั้งเป้าหมายการออมเงินของคุณ
+        </span>
+    </div> {% endcomment %}
+    
+
+    {% comment %} if have budget {% endcomment %}
     <div class="p-4 grid grid-cols-3 gap-4">
         <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
             <div class="flex justify-between mb-6">
                 <div>
-                    <div class="text-2xl font-semibold mb-1">10</div>
-                    <div class="text-sm font-medium text-gray-400">Active orders</div>
+                    <div class="text-2xl font-semibold mb-1">Name</div>
+                    <div class="text-sm font-medium text-gray-400">target date:</div>
                 </div>
             </div>
             <div class="flex items-center">
@@ -42,8 +60,8 @@
         <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
             <div class="flex justify-between mb-6">
                 <div>
-                    <div class="text-2xl font-semibold mb-1">10</div>
-                    <div class="text-sm font-medium text-gray-400">Active orders</div>
+                    <div class="text-2xl font-semibold mb-1">Name</div>
+                    <div class="text-sm font-medium text-gray-400">target date:</div>
                 </div>
             </div>
             <div class="flex items-center">
@@ -58,8 +76,8 @@
         <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
             <div class="flex justify-between mb-6">
                 <div>
-                    <div class="text-2xl font-semibold mb-1">10</div>
-                    <div class="text-sm font-medium text-gray-400">Active orders</div>
+                    <div class="text-2xl font-semibold mb-1">Name</div>
+                    <div class="text-sm font-medium text-gray-400">target date:</div>
                 </div>
             </div>
             <div class="flex items-center">

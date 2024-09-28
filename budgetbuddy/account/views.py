@@ -26,8 +26,14 @@ class EditBudgetView(View):
         
         form = EditBudgetForm()
         return render(request, 'budget/editBudget.html', {"form": form})
-    
+
+
 #saving zone view
 class SavingView(View):
     def get(self, request):
         return render(request, 'saving.html')
+
+class AddSavingView(View):
+    def get(self, request):
+        form = AddSavingForm()
+        return render(request, 'addSaving.html', {"form": form})

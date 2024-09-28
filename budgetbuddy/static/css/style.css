@@ -700,6 +700,10 @@ video {
   margin-top: 1rem;
 }
 
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
 .block {
   display: block;
 }
@@ -827,6 +831,10 @@ video {
 
 .w-16 {
   width: 4rem;
+}
+
+.w-2\/4 {
+  width: 50%;
 }
 
 .min-w-\[460px\] {
