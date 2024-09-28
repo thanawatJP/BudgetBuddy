@@ -11,12 +11,12 @@ class HomeView(View):
 #budget zone view
 class BudgetView(View):
     def get(self, request):
-        return render(request, 'budget.html')
+        return render(request, 'budget/budget.html')
 
 class AddBudgetView(View):
     def get(self, request):
         form = AddBudgetForm()
-        return render(request, 'addBudget.html', {"form": form})
+        return render(request, 'budget/addBudget.html', {"form": form})
     
 class EditBudgetView(View):
     def get(self, request):
@@ -25,5 +25,9 @@ class EditBudgetView(View):
         # form = EditBudgetForm(instance=budget)
         
         form = EditBudgetForm()
-        return render(request, 'editBudget.html', {"form": form})
+        return render(request, 'budget/editBudget.html', {"form": form})
     
+#saving zone view
+class SavingView(View):
+    def get(self, request):
+        return render(request, 'saving.html')
