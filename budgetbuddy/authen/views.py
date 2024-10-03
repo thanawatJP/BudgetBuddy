@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from .forms import RegisterationForm
+from account.models import Account
 
 class LoginView(View):
     def get(self, request):
@@ -35,7 +36,8 @@ class RegisterView(View):
     def post(self, request):
         form = RegisterationForm(data=request.POST)
         if form.is_valid():
-            form.save()
+            newUser = form.save()
+            Account.objects.create(name="main", user=newUser)
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
