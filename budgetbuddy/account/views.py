@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
 from django.views import View
 from .forms import *
 from django.db.models import Sum
@@ -56,7 +57,7 @@ class AddSavingView(View):
 #account zone view
 class AccountView(View):
     def get(self, request):
-        accounts = Account.objects.all()
+        accounts = Account.objects.filter(user=request.user)
         for account in accounts:
             income = Transaction.objects.filter(account=account, transaction_type="income").aggregate(income=Sum("amount"))
             expense = Transaction.objects.filter(account=account, transaction_type="expense").aggregate(expense=Sum("amount"))
@@ -76,10 +77,48 @@ class AccountView(View):
                 account.lastest = lastestDate
         return render(request, 'account/account.html', {"accounts": accounts})
 
+    def delete(self, request, account_id):
+        try:
+            account = Account.objects.get(pk=account_id)
+            account.delete()
+            return JsonResponse({"status": 200})
+        except:
+            return JsonResponse({"status": 500})
+
 class AddAccountView(View):
     def get(self, request):
-        form = AddAccountForm()
-        return render(request, 'account/addAccount.html', {"form": form})
+        form = AccountForm()
+        return render(request, 'account/accountForm.html', {"form": form})
+
+    def post(self, request):
+        form = AccountForm(request.POST)
+        
+        if form.is_valid():
+            Account.objects.create(name=form.cleaned_data['name'], user=request.user)
+            return redirect("/account/account")
+        
+        return render(request, "account/accountForm.html", {
+            "form": form
+        })
+
+class EditAccountView(View):
+    def get(self, request, account_id):
+        account = Account.objects.get(pk=account_id)
+        form = AccountForm(instance=account)
+        return render(request, 'account/accountForm.html', {"form": form})
+
+    def post(self, request, account_id):
+        account = Account.objects.get(pk=account_id)
+        form = AccountForm(request.POST, instance=account)
+        
+        if form.is_valid():
+            form.save()
+            return redirect("/account/account")
+        
+        return render(request, "account/accountForm.html", {
+            "form": form
+        })
+
 
 #notify zone view
 class NotifyView(View):

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Saving{% endblock %}
 
@@ -24,7 +25,7 @@
     </div>
     
 
-    <div class="py-2 px-6 relative overflow-x-auto">
+    <div class="py-2 px-6 relative overflow-x-auto min-h-screen">
         <table class="w-full text-sm text-left rtl:text-right">
             <thead class="text-sm text-white uppercase bg-green-700">
                 <tr>
@@ -39,6 +40,9 @@
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Last Updated
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        
                     </th>
                 </tr>
             </thead>
@@ -57,6 +61,21 @@
                     <td class="px-6 py-4">
                         {{ account.lastest }}
                     </td>
+                    <td class="py-2 px-4">
+                        <div class="dropdown">
+                            <button type="button" class="dropdown-toggle text-gray-400 hover:text-gray-600 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
+                            <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
+                                <li>
+                                    <a href="{% url 'editAccount' account.id %}" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Update</a>
+                                </li>
+                                <li>
+                                    <button type="button" onclick="deleteAccount({{ account.id }}, '{{csrf_token}}')" class="delete w-full flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</button>
+
+                                        {% comment %} <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</a> {% endcomment %}
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -66,3 +85,9 @@
 </main>
 
 {% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="{% static 'js/accountScript.js' %}"></script>
+{% endblock %}
+
