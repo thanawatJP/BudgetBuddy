@@ -31,9 +31,25 @@ class EditBudgetView(View):
 #saving zone view
 class SavingView(View):
     def get(self, request):
-        return render(request, 'saving.html')
+        return render(request, 'saving/saving.html')
 
 class AddSavingView(View):
     def get(self, request):
         form = AddSavingForm()
-        return render(request, 'addSaving.html', {"form": form})
+        return render(request, 'saving/addSaving.html', {"form": form})
+
+#account zone view
+class AccountView(View):
+    def get(self, request):
+        return render(request, 'account/account.html')
+
+class AddAccountView(View):
+    def get(self, request):
+        form = AddAccountForm()
+        return render(request, 'account/addAccount.html', {"form": form})
+
+#notify zone view
+class NotifyView(View):
+    def get(self, request):
+        return render(request, 'notify.html')
+

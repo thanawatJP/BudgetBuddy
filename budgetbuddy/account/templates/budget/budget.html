@@ -23,18 +23,18 @@
         </a>
     </div>
     {% comment %} if no budget create {% endcomment %}
-    {% comment %} <div class="relative text-2xl w-full flex justify-center h-screen items-center">
+    <div class="relative text-2xl w-full flex justify-center h-screen items-center">
         <div class="absolute inset-0 flex justify-center items-center">
             <i class="ri-hand-coin-line text-gray-200 text-9xl"></i>
         </div>
         <span class="relative text-gray-400 px-4 py-2 z-10">
             กด Add New เพื่อสร้าง Budget ใหม่เพื่อควบคุมงบประมาณการใช้เงินของคุณได้ดีขึ้น
         </span>
-    </div> {% endcomment %}
+    </div>
     
 
     {% comment %} if have budget {% endcomment %}
-    <div class="p-4 grid grid-cols-3 gap-4">
+    {% comment %} <div class="p-4 grid grid-cols-3 gap-4">
         <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5 w-full">
             <div class="flex justify-between mb-6">
                 <div class="w-full">
@@ -50,16 +50,16 @@
                 </div>
             </div>
             <div class="flex justify-end">
-                <a href="{% url 'editBudget' %}">
+                <a href="{% url 'editBudget' %}"> {% endcomment %}
                 {% comment %} <a href="{% url 'editBudget' budget_id%}"> {% endcomment %}
-                    <button class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
+                    {% comment %} <button class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
                         <i class="ri-edit-box-line"></i>
                         Edit
                     </button>
                 </a>
             </div>
         </div>
-    </div>
+    </div> {% endcomment %}
 </main>
 
 {% endblock %}

@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Budget, SavingsGoal
+from .models import Budget, SavingsGoal, Account
 
 class AddBudgetForm(ModelForm):
 
@@ -52,5 +52,18 @@ class AddSavingForm(ModelForm):
     
     def __init__(self, *args, **kwargs):
         super(AddSavingForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
+
+class AddAccountForm(ModelForm):
+
+    class Meta:
+        model = Account
+        fields = [
+            "name"
+        ]
+    
+    def __init__(self, *args, **kwargs):
+        super(AddAccountForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
