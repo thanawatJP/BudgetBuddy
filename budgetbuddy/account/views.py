@@ -69,7 +69,7 @@ class AccountView(View):
             else:
                 expense = expense['expense']
             account.balance = income-expense
-            lastestDate = Transaction.objects.order_by('-date').first()
+            lastestDate = Transaction.objects.order_by('-create_at').first()
             if lastestDate is None:
                 account.lastest = account.create_at
             else:
