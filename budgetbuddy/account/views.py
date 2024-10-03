@@ -15,17 +15,30 @@ class BudgetView(View):
 
 class AddBudgetView(View):
     def get(self, request):
-        form = AddBudgetForm()
+        form = BudgetForm()
         return render(request, 'budget/addBudget.html', {"form": form})
-    
+
 class EditBudgetView(View):
-    def get(self, request):
-    # def get(self, request, budget_id):
-        # budget = Budget.objects.get(id=budget_id)
-        # form = EditBudgetForm(instance=budget)
-        
-        form = EditBudgetForm()
+    def get(self, request, budget_id):
+        budget = Budget.objects.get(id=budget_id)
+        form = BudgetForm(instance=budget)
+
+        form = BudgetForm()
         return render(request, 'budget/editBudget.html', {"form": form})
+
+# class AddBudgetView(View):
+#     def get(self, request):
+#         form = AddBudgetForm()
+#         return render(request, 'budget/addBudget.html', {"form": form})
+    
+# class EditBudgetView(View):
+#     def get(self, request):
+#     # def get(self, request, budget_id):
+#         # budget = Budget.objects.get(id=budget_id)
+#         # form = EditBudgetForm(instance=budget)
+        
+#         form = EditBudgetForm()
+#         return render(request, 'budget/editBudget.html', {"form": form})
 
 
 #saving zone view
@@ -41,7 +54,8 @@ class AddSavingView(View):
 #account zone view
 class AccountView(View):
     def get(self, request):
-        return render(request, 'account/account.html')
+        accounts = Account.objects.all()
+        return render(request, 'account/account.html', {"accounts": accounts})
 
 class AddAccountView(View):
     def get(self, request):
