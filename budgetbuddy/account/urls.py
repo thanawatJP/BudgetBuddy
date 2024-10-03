@@ -12,5 +12,4 @@ urlpatterns = [
     path('account/', AccountView.as_view(), name="account"),
     path('account/add/', AddAccountView.as_view(), name="addAccount"),
     path('notify/', NotifyView.as_view(), name="notify"),
-
 ]

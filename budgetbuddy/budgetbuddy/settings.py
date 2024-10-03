@@ -75,26 +75,26 @@ WSGI_APPLICATION = 'budgetbuddy.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "budgetbuddy",
-#         "USER": "postgres",
-#         "PASSWORD": "password",
-#         "HOST": "localhost",
-#         "PORT": "5432",
-#     }
-# }
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "budgetbuddy",
         "USER": "postgres",
-        "PASSWORD": "N55465495",
+        "PASSWORD": "password",
         "HOST": "localhost",
         "PORT": "5432",
     }
 }
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "budgetbuddy",
+#         "USER": "postgres",
+#         "PASSWORD": "N55465495",
+#         "HOST": "localhost",
+#         "PORT": "5432",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -120,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = "Asia/Bangkok"
+TIME_ZONE = 'Asia/Bangkok'
 
 USE_I18N = True
 

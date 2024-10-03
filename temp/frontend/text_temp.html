@@ -1,0 +1,264 @@
+{% extends 'base.html' %} 
+{% block title %}Home{% endblock %} 
+{% block content%}
+<main
+  class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-50 min-h-screen transition-all main"
+>
+  <div
+    class="py-2 px-6 bg-white flex items-center shadow-md shadow-black/5 sticky top-0 left-0 z-30 pt-3 pb-3"
+  >
+    <ul class="flex items-center text-sm ml-4">
+      <li class="mr-2">
+        <a
+          href="{% url 'home' %}"
+          class="text-gray-400 hover:text-gray-600 font-medium"
+          >BudgetBuddy</a
+        >
+      </li>
+      <li class="text-gray-600 mr-2 font-medium">/</li>
+      <li class="text-gray-600 mr-2 font-medium">Home</li>
+    </ul>
+  </div>
+
+  <div class="flex items-center p-6">
+    <img
+      src="https://st3.depositphotos.com/15648834/17930/v/450/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
+      alt=""
+      class="w-16 rounded-full"
+    />
+    <div class="">
+      <h1 class="pl-6 text-xl text-green-700">Hello, {{user.username}}</h1>
+      <p class="pl-6 text-right text-gray-400">Welcome to the budgetbuddy</p>
+    </div>
+  </div>
+  <div class="p-6">
+    <!-- start: cards -->
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6"
+    >
+      <div
+        class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <i class="ri-cash-line text-8xl text-green-700"></i>
+          <div class="flex-grow text-right">
+            <!-- เพิ่ม text-right เพื่อจัดชิดขวา -->
+            <div class="text-2xl font-semibold mb-1">{{total_income}} ฿</div>
+            <div class="text-sm font-medium text-gray-400">Total Income</div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <i class="ri-coins-line text-8xl text-green-700"></i>
+          <div class="flex-grow text-right">
+            <!-- เพิ่ม text-right เพื่อจัดชิดขวา -->
+            <div class="text-2xl font-semibold mb-1">{{total_expense}} ฿</div>
+            <div class="text-sm font-medium text-gray-400">Total Expense</div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <i class="ri-safe-2-line text-8xl text-green-700"></i>
+          <div class="flex-grow text-right">
+            <!-- เพิ่ม text-right เพื่อจัดชิดขวา -->
+            <div class="text-2xl font-semibold mb-1">{{total_savinggoals}}</div>
+            <div class="text-sm font-medium text-gray-400">SavingGoals</div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <i class="ri-hand-coin-line text-8xl text-green-700"></i>
+          <div class="flex-grow text-right">
+            <!-- เพิ่ม text-right เพื่อจัดชิดขวา -->
+            <div class="text-2xl font-semibold mb-1">{{total_budget}}</div>
+            <div class="text-sm font-medium text-gray-400">Budget</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- stop: cards -->
+    <!-- start: income&expense table -->
+    <div class="grid grid-cols-1 gap-6 mb-6">
+        <div class="bg-white border border-gray-100 shadow-md shadow-black/5 p-6 rounded-md">
+            <div class="flex justify-between mb-4 items-start">
+                <div class="font-medium">Income&Expense</div>
+            </div>
+            <form action="" class="flex items-center mb-4">
+                <div class="relative w-full mr-2">
+                    <input type="text" class="py-2 pr-4 pl-10 bg-gray-50 w-full outline-none border border-gray-100 rounded-md text-sm focus:border-blue-500" placeholder="Search...">
+                    <i class="ri-search-line absolute top-1/2 left-4 -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <select class="text-sm py-2 pl-4 pr-10 bg-gray-50 border border-gray-100 rounded-md focus:border-blue-500 outline-none appearance-none bg-select-arrow bg-no-repeat bg-[length:16px_16px] bg-[right_16px_center]">
+                    <option value="">All</option>
+                    <option value="">Account A</option>
+                    <option value="">Account B</option>
+                </select>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[540px]">
+                    <thead>
+                        <tr>
+                            <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left rounded-tl-md rounded-bl-md">date</th>
+                            <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">account</th>
+                            <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">category</th>
+                            <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">amount</th>
+                            <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">type</th>
+                            <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left rounded-tr-md rounded-br-md"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">28/09/24</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">Account B</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">Games</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">1,290</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="inline-block p-1 rounded bg-emerald-500/10 text-emerald-500 font-medium text-[13px] leading-none">Income</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <div class="dropdown">
+                                    <button type="button" class="dropdown-toggle text-gray-400 hover:text-gray-600 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
+                                    <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
+                                        <li>
+                                            <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Update</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <!-- <div class="flex items-center">
+                                    <img src="https://placehold.co/32x32" alt="" class="w-8 h-8 rounded object-cover block">
+                                    <a href="#" class="text-gray-600 text-sm font-medium hover:text-blue-500 ml-2 truncate">Create landing page</a>
+                                </div> -->
+                                <span class="text-[13px] font-medium text-gray-400">27/09/24</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">Account A</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">Games</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">1,290</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="inline-block p-1 rounded bg-rose-500/10 text-rose-500 font-medium text-[13px] leading-none">Expense</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <div class="dropdown">
+                                    <button type="button" class="dropdown-toggle text-gray-400 hover:text-gray-600 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
+                                    <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
+                                        <li>
+                                            <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Update</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <!-- <div class="flex items-center">
+                                    <img src="https://placehold.co/32x32" alt="" class="w-8 h-8 rounded object-cover block">
+                                    <a href="#" class="text-gray-600 text-sm font-medium hover:text-blue-500 ml-2 truncate">Create landing page</a>
+                                </div> -->
+                                <span class="text-[13px] font-medium text-gray-400">27/09/24</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">Account B</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">Games</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">1,290</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="inline-block p-1 rounded bg-rose-500/10 text-rose-500 font-medium text-[13px] leading-none">Expense</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <div class="dropdown">
+                                    <button type="button" class="dropdown-toggle text-gray-400 hover:text-gray-600 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
+                                    <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
+                                        <li>
+                                            <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Update</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <!-- <div class="flex items-center">
+                                    <img src="https://placehold.co/32x32" alt="" class="w-8 h-8 rounded object-cover block">
+                                    <a href="#" class="text-gray-600 text-sm font-medium hover:text-blue-500 ml-2 truncate">Create landing page</a>
+                                </div> -->
+                                <span class="text-[13px] font-medium text-gray-400">26/09/24</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">Account A</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">Games</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="text-[13px] font-medium text-gray-400">1,290</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <span class="inline-block p-1 rounded bg-rose-500/10 text-rose-500 font-medium text-[13px] leading-none">Expense</span>
+                            </td>
+                            <td class="py-2 px-4 border-b border-b-gray-50">
+                                <div class="dropdown">
+                                    <button type="button" class="dropdown-toggle text-gray-400 hover:text-gray-600 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
+                                    <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
+                                        <li>
+                                            <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Update</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- end: income&expense table -->
+  </div>
+</main>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+    <script src="../../static/js/script.js"></script>
+{% endblock %}
+
