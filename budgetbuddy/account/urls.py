@@ -14,5 +14,17 @@ urlpatterns = [
     path('account/delete/<int:account_id>/', AccountView.as_view(), name="deleteAccount"),
     path('account/edit/<int:account_id>/', EditAccountView.as_view(), name="editAccount"),
     path('notify/', NotifyView.as_view(), name="notify"),
+    
+    # dev zone
+    ## categories
+    path('developer/categories/', CategoriesDevView.as_view(), name="categoriesDev"),
+    path('developer/categories/delete/<int:category_id>/', CategoriesDevView.as_view(), name="deleteCategoryDev"),
+    path('developer/categories/add', AddCategoriesDevView.as_view(), name="addCategoriesDev"),
+    path('developer/categories/edit/<int:category_id>/', EditCategoriesDevView.as_view(), name="editCategoryDev"),
+    ## tags
+    path('developer/tags/', TagsDevView.as_view(), name="tagsDev"),
+    path('developer/tags/delete/<int:tag_id>/', TagsDevView.as_view(), name="deleteTagDev"),
+    path('developer/tags/add', AddTagsDevView.as_view(), name="addTagsDev"),
+    path('developer/tags/edit/<int:tag_id>/', EditTagsDevView.as_view(), name="editTagDev"),
 
 ]

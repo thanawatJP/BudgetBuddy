@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Budget, SavingsGoal, Account
+from .models import Budget, SavingsGoal, Account, Category, Tag
 
 class BudgetForm(ModelForm):
 
@@ -18,40 +18,7 @@ class BudgetForm(ModelForm):
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
 
-# class AddBudgetForm(ModelForm):
-
-#     amount = forms.DecimalField(min_value=0.0)
-
-#     class Meta:
-#         model = Budget
-#         fields = [
-#             "category",
-#             "amount",
-#         ]
-    
-#     def __init__(self, *args, **kwargs):
-#         super(AddBudgetForm, self).__init__(*args, **kwargs)
-#         for visible in self.visible_fields():
-#             visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
-
-# class EditBudgetForm(ModelForm):
-
-#     amount = forms.DecimalField(min_value=0.0)
-
-#     class Meta:
-#         model = Budget
-#         fields = [
-#             "category",
-#             "amount",
-#         ]
-    
-#     def __init__(self, *args, **kwargs):
-#         super(EditBudgetForm, self).__init__(*args, **kwargs)
-#         for visible in self.visible_fields():
-#             visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
-
-
-class AddSavingForm(ModelForm):
+class SavingForm(ModelForm):
 
     target_amount = forms.DecimalField(min_value=0.0)
 
@@ -67,7 +34,7 @@ class AddSavingForm(ModelForm):
         }
     
     def __init__(self, *args, **kwargs):
-        super(AddSavingForm, self).__init__(*args, **kwargs)
+        super(SavingForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
 
@@ -83,3 +50,31 @@ class AccountForm(ModelForm):
         super(AccountForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
+
+class CategoryDevForm(ModelForm):
+
+    class Meta:
+        model = Category
+        fields = [
+            "name"
+        ]
+    
+    def __init__(self, *args, **kwargs):
+        super(CategoryDevForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
+
+
+class TagDevForm(ModelForm):
+
+    class Meta:
+        model = Tag
+        fields = [
+            "name"
+        ]
+    
+    def __init__(self, *args, **kwargs):
+        super(TagDevForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
+
