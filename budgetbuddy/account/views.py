@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.views import View
 from .forms import *
+from django.db.models import Sum
+from .models import Transaction, Account
 
 # Create your views here.
 class HomeView(View):
@@ -55,6 +57,23 @@ class AddSavingView(View):
 class AccountView(View):
     def get(self, request):
         accounts = Account.objects.all()
+        for account in accounts:
+            income = Transaction.objects.filter(account=account, transaction_type="income").aggregate(income=Sum("amount"))
+            expense = Transaction.objects.filter(account=account, transaction_type="expense").aggregate(expense=Sum("amount"))
+            if income['income'] is None:
+                income = 0
+            else:
+                income = income['income']
+            if expense['expense'] is None:
+                expense = 0
+            else:
+                expense = expense['expense']
+            account.balance = income-expense
+            lastestDate = Transaction.objects.order_by('-date').first()
+            if lastestDate is None:
+                account.lastest = account.create_at
+            else:
+                account.lastest = lastestDate
         return render(request, 'account/account.html', {"accounts": accounts})
 
 class AddAccountView(View):
