@@ -120,6 +120,7 @@ class NotifyView(View):
         return render(request, 'notify.html')
 
 
+
 #developer zone view
 ## categories
 class CategoriesDevView(View):
