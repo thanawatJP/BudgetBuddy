@@ -122,22 +122,35 @@ class BudgetView(View):
     def get(self, request):
         budgets = Budget.objects.filter(user=request.user)
         for budget in budgets:
-            Transaction.objects.filter(category_id=budget.categoryA)
-            budget
+            user_pk = request.user.pk
+            user_accounts = request.user.account_set.all()
+            transaction = Transaction.objects.filter(account__in=user_accounts, create_at__month=datetime.now().month, transaction_type='expense').aggregate(expense=Sum("amount"))
+            if transaction['expense'] is None:
+                budget.expense = 0
+            else:
+                budget.expense = transaction['expense']
         return render(request, 'budget/budget.html', {
             "budgets": budgets
         })
+    
+    def delete(self, request, budget_id):
+        try:
+            budget = Budget.objects.get(pk=budget_id)
+            budget.delete()
+            return JsonResponse({"status": 200})
+        except:
+            return JsonResponse({"status": 500})
 
 class AddBudgetView(View):
     def get(self, request):
-        form = BudgetForm()
+        form = BudgetForm(user=request.user)
         return render(request, 'budget/budgetForm.html', {
             "form": form,
             "tag": "Add"
         })
 
     def post(self, request):
-        form = BudgetForm(request.POST)
+        form = BudgetForm(request.POST, user=request.user)
         
         if form.is_valid():
             Budget.objects.create(category=form.cleaned_data['category'], amount=form.cleaned_data['amount'], user=request.user)
@@ -153,8 +166,23 @@ class EditBudgetView(View):
         budget = Budget.objects.get(id=budget_id)
         form = BudgetForm(instance=budget)
 
-        form = BudgetForm()
-        return render(request, 'budget/editBudget.html', {"form": form})
+        return render(request, 'budget/budgetForm.html', {
+            "form": form,
+            "tag": "Edit"
+            })
+
+    def post(self, request, budget_id):
+        budget = Budget.objects.get(id=budget_id)
+        form = BudgetForm(request.POST, instance=budget)
+        
+        if form.is_valid():
+            form.save()
+            return redirect("/account/budget/")
+        
+        return render(request, 'budget/budgetForm.html', {
+            "form": form,
+            "tag": "Edit"
+            })
 
 
 #saving zone view

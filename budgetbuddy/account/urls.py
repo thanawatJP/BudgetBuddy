@@ -5,8 +5,9 @@ from account.views import *
 urlpatterns = [
     path('', HomeView.as_view(), name="home"),
     path('budget/', BudgetView.as_view(), name="budget"),
+    path('budget/delete/<int:budget_id>/', BudgetView.as_view(), name="deleteBudget"),
     path('budget/add/', AddBudgetView.as_view(), name="addBudget"),
-    path('budget/edit/<int:budget_id>', EditBudgetView.as_view(), name="editBudget"),
+    path('budget/edit/<int:budget_id>/', EditBudgetView.as_view(), name="editBudget"),
     path('saving/', SavingView.as_view(), name="saving"),
     path('saving/add/', AddSavingView.as_view(), name="addSaving"),
     path('account/', AccountView.as_view(), name="account"),
