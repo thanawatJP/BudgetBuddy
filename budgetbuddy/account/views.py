@@ -22,6 +22,13 @@ class HomeView(View):
         user_accounts = request.user.account_set.all()
         user = User.objects.get(pk=user_pk)
         selected_account_id = request.GET.get('account', 'all')
+        
+        #check get account id กัน user ดูข้อมูลคนอื่น
+        user_account_ids = [key.id for key in user_accounts]
+        if selected_account_id != 'all' and int(selected_account_id) not in user_account_ids:
+            selected_account_id = 'all'
+
+        print(selected_account_id)
         # คำนวณรายรับรายจ่ายรวมของ user
         user_income = Transaction.objects.filter(account__in=user_accounts, transaction_type='income').aggregate(total_income=Sum('amount'))
         user_expense = Transaction.objects.filter(account__in=user_accounts, transaction_type='expense').aggregate(total_expense=Sum('amount'))
