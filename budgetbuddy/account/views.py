@@ -108,12 +108,33 @@ class HomeView(View):
 #budget zone view
 class BudgetView(View):
     def get(self, request):
-        return render(request, 'budget/budget.html')
+        budgets = Budget.objects.filter(user=request.user)
+        for budget in budgets:
+            Transaction.objects.filter(category_id=budget.category)
+            budget
+        return render(request, 'budget/budget.html', {
+            "budgets": budgets
+        })
 
 class AddBudgetView(View):
     def get(self, request):
         form = BudgetForm()
-        return render(request, 'budget/addBudget.html', {"form": form})
+        return render(request, 'budget/budgetForm.html', {
+            "form": form,
+            "tag": "Add"
+        })
+
+    def post(self, request):
+        form = BudgetForm(request.POST)
+        
+        if form.is_valid():
+            Budget.objects.create(category=form.cleaned_data['category'], amount=form.cleaned_data['amount'], user=request.user)
+            return redirect("/account/budget/")
+        
+        return render(request, 'budget/budgetForm.html',{
+            "form": form,
+            "tag": "Add"}
+        )
 
 class EditBudgetView(View):
     def get(self, request, budget_id):

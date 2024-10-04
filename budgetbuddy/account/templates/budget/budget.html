@@ -22,44 +22,44 @@
             </button>
         </a>
     </div>
-    {% comment %} if no budget create {% endcomment %}
-    <div class="relative text-2xl w-full flex justify-center h-screen items-center">
-        <div class="absolute inset-0 flex justify-center items-center">
-            <i class="ri-hand-coin-line text-gray-200 text-9xl"></i>
-        </div>
-        <span class="relative text-gray-400 px-4 py-2 z-10">
-            กด Add New เพื่อสร้าง Budget ใหม่เพื่อควบคุมงบประมาณการใช้เงินของคุณได้ดีขึ้น
-        </span>
-    </div>
-    
-
-    {% comment %} if have budget {% endcomment %}
-    {% comment %} <div class="p-4 grid grid-cols-3 gap-4">
-        <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5 w-full">
-            <div class="flex justify-between mb-6">
-                <div class="w-full">
-                    <div class="flex justify-between ">
-                        <div class="text-2xl font-semibold mb-1">Category Name</div>
-                        <div class="text-2xl mb-1">
-                            <a href="#">
-                                <i class="ri-close-line"></i>
-                            </a>
+    {% if budgets %}
+        {% for budget in budgets %}
+            <div class="p-4 grid grid-cols-3 gap-4">
+                <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5 w-full">
+                    <div class="flex justify-between mb-6">
+                        <div class="w-full">
+                            <div class="flex justify-between ">
+                                <div class="text-2xl font-semibold mb-1">{{ budget.category }}</div>
+                                <div class="text-2xl mb-1">
+                                    <a href="#">
+                                        <i class="ri-close-line"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="text-sm font-medium text-gray-400">$(Money)</div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-lg font-medium text-gray-400">500/{{ budget.amount }}</div>
+                        <a href="{% url 'editBudget' budget.id %}">     
+                            <button class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
+                                <i class="ri-edit-box-line"></i>
+                                Edit
+                            </button>
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="flex justify-end">
-                <a href="{% url 'editBudget' %}"> {% endcomment %}
-                {% comment %} <a href="{% url 'editBudget' budget_id%}"> {% endcomment %}
-                    {% comment %} <button class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
-                        <i class="ri-edit-box-line"></i>
-                        Edit
-                    </button>
-                </a>
+        {% endfor %}
+    {% else %}
+        <div class="relative text-2xl w-full flex justify-center h-screen items-center">
+            <div class="absolute inset-0 flex justify-center items-center">
+                <i class="ri-hand-coin-line text-gray-200 text-9xl"></i>
             </div>
+            <span class="relative text-gray-400 px-4 py-2 z-10">
+                กด Add New เพื่อสร้าง Budget ใหม่เพื่อควบคุมงบประมาณการใช้เงินของคุณได้ดีขึ้น
+            </span>
         </div>
-    </div> {% endcomment %}
+    {% endif %}
 </main>
 
 {% endblock %}
