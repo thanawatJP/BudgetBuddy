@@ -11,11 +11,17 @@ from datetime import datetime, timedelta
 
 # Create your views here.
 class HomeView(View):
+    def ensure_six_elements(self, data_list):
+        # ตรวจสอบว่า list มีสมาชิกครบ 6 ตัวมั้ย
+        while len(data_list) < 6:
+            data_list.insert(0, 0.0) 
+        return data_list
+    
     def get(self, request):
         user_pk = request.user.pk
         user_accounts = request.user.account_set.all()
         user = User.objects.get(pk=user_pk)
-        selected_account_id = request.GET.get('account', None)
+        selected_account_id = request.GET.get('account', 'all')
         # คำนวณรายรับรายจ่ายรวมของ user
         user_income = Transaction.objects.filter(account__in=user_accounts, transaction_type='income').aggregate(total_income=Sum('amount'))
         user_expense = Transaction.objects.filter(account__in=user_accounts, transaction_type='expense').aggregate(total_expense=Sum('amount'))
@@ -52,7 +58,7 @@ class HomeView(View):
             .annotate(total_income=Sum('amount'))
             .order_by('month')
         )
-        graph_total_income = [float(income['total_income']) for income in six_month_income]
+        graph_total_income = self.ensure_six_elements([float(income['total_income']) for income in six_month_income])
         # Query รายจ่ายในแต่ละเดือน
         six_month_expense = (
             Transaction.objects
@@ -62,7 +68,7 @@ class HomeView(View):
             .annotate(total_expense=Sum('amount'))
             .order_by('month')
         )
-        graph_total_expense = [float(expense['total_expense']) for expense in six_month_expense]
+        graph_total_expense = self.ensure_six_elements([float(expense['total_expense']) for expense in six_month_expense])
         
         six_month_income_avg = (
             Transaction.objects
@@ -76,18 +82,23 @@ class HomeView(View):
             .aggregate(average_expense=Avg('amount'))
         )
         
+        #ส่วนของกราฟโดนัท
         current_month_income_sum = (
             Transaction.objects
             .filter(account__in=user_accounts, create_at__month=datetime.now().month, create_at__year=datetime.now().year, transaction_type='income')
             .aggregate(sum_income=Sum('amount'))
         )
+        if current_month_income_sum['sum_income'] is None:
+            current_month_income_sum['sum_income'] = 0
         
         current_month_expense_sum = (
             Transaction.objects
             .filter(account__in=user_accounts, create_at__month=datetime.now().month, create_at__year=datetime.now().year, transaction_type='expense')
             .aggregate(sum_expense=Sum('amount'))
         )
-        
+        if current_month_expense_sum['sum_expense'] is None:
+            current_month_expense_sum['sum_expense'] = 0
+
         context = {
             'user': user,
             'total_income': total_income,
@@ -101,7 +112,8 @@ class HomeView(View):
             'six_month_expense_avg': six_month_expense_avg,
             'six_month_income_avg': six_month_income_avg,
             'current_month_income_sum': current_month_income_sum,
-            'current_month_expense_sum': current_month_expense_sum
+            'current_month_expense_sum': current_month_expense_sum,
+            'selected_account_id': selected_account_id
         }
         return render(request, 'test.html', context)
 
@@ -158,7 +170,7 @@ class AddSavingView(View):
 #account zone view
 class AccountView(View):
     def get(self, request):
-        accounts = Account.objects.filter(user=request.user)
+        accounts = Account.objects.filter()
         for account in accounts:
             income = Transaction.objects.filter(account=account, transaction_type="income").aggregate(income=Sum("amount"))
             expense = Transaction.objects.filter(account=account, transaction_type="expense").aggregate(expense=Sum("amount"))
