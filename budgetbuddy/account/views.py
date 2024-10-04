@@ -77,16 +77,22 @@ class HomeView(View):
         )
         graph_total_expense = self.ensure_six_elements([float(expense['total_expense']) for expense in six_month_expense])
         
-        six_month_income_avg = (
-            Transaction.objects
-            .filter(account__in=user_accounts, create_at__gte=six_months_ago, transaction_type='income')
-            .aggregate(average_income=Avg('amount'))
-        )
-        
         six_month_expense_avg = (
             Transaction.objects
             .filter(account__in=user_accounts, create_at__gte=six_months_ago, transaction_type='expense')
-            .aggregate(average_expense=Avg('amount'))
+            .annotate(month=TruncMonth('create_at'))
+            .values('month')
+            .annotate(total_expense=Sum('amount'))
+            .aggregate(average_expense=Avg('total_expense'))
+        )
+        
+        six_month_income_avg = (
+            Transaction.objects
+            .filter(account__in=user_accounts, create_at__gte=six_months_ago, transaction_type='income')
+            .annotate(month=TruncMonth('create_at'))
+            .values('month')
+            .annotate(total_income=Sum('amount'))
+            .aggregate(average_income=Avg('total_income'))
         )
         
         #ส่วนของกราฟโดนัท
