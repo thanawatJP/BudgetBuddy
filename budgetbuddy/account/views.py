@@ -1,10 +1,10 @@
-from django.http import JsonResponse
 from .forms import *
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views import View
-from django.contrib.auth.models import User
 from account.models import *
 from django.db.models import *
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.views import View
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models.functions import TruncMonth
 from datetime import datetime, timedelta
@@ -110,7 +110,7 @@ class BudgetView(View):
     def get(self, request):
         budgets = Budget.objects.filter(user=request.user)
         for budget in budgets:
-            Transaction.objects.filter(category_id=budget.category)
+            Transaction.objects.filter(category_id=budget.categoryA)
             budget
         return render(request, 'budget/budget.html', {
             "budgets": budgets
