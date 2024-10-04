@@ -14,6 +14,7 @@ urlpatterns = [
     path('account/delete/<int:account_id>/', AccountView.as_view(), name="deleteAccount"),
     path('account/edit/<int:account_id>/', EditAccountView.as_view(), name="editAccount"),
     path('notify/', NotifyView.as_view(), name="notify"),
+<<<<<<< HEAD
     
     # dev zone
     ## categories
@@ -27,4 +28,6 @@ urlpatterns = [
     path('developer/tags/add', AddTagsDevView.as_view(), name="addTagsDev"),
     path('developer/tags/edit/<int:tag_id>/', EditTagsDevView.as_view(), name="editTagDev"),
 
+=======
+>>>>>>> refs/remotes/origin/main
 ]
