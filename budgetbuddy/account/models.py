@@ -15,6 +15,12 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Tag(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('income', 'Income'),
@@ -25,8 +31,9 @@ class Transaction(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    description = models.TextField(blank=True, null=True)
+    description = models.CharField(max_length=255)
     transaction_type = models.CharField(max_length=7, choices=TRANSACTION_TYPES)
+    tags = models.ManyToManyField(Tag)
 
     def __str__(self):
         return f'{self.transaction_type.capitalize()} - {self.amount}'
@@ -58,15 +65,4 @@ class Notification(models.Model):
     def __str__(self):
         return f'Notification for {self.user}'
 
-class Tag(models.Model):
-    name = models.CharField(max_length=255, unique=True)
 
-    def __str__(self):
-        return self.name
-
-class TransactionTag(models.Model):
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.tag.name} for transaction {self.transaction.id}'

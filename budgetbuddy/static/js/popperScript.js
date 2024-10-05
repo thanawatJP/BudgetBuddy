@@ -1,10 +1,11 @@
-const testPopperInstance = {}
+// start: Popper
+const popperInstance = {}
 document.querySelectorAll('.dropdown').forEach(function (item, index) {
     const popperId = 'popper-' + index
     const toggle = item.querySelector('.dropdown-toggle')
     const menu = item.querySelector('.dropdown-menu')
     menu.dataset.popperId = popperId
-    testPopperInstance[popperId] = Popper.createPopper(toggle, menu, {
+    popperInstance[popperId] = Popper.createPopper(toggle, menu, {
         modifiers: [
             {
                 name: 'offset',
@@ -47,7 +48,7 @@ function hideDropdown() {
     })
 }
 function showPopper(popperId) {
-    testPopperInstance[popperId].setOptions(function (options) {
+    popperInstance[popperId].setOptions(function (options) {
         return {
             ...options,
             modifiers: [
@@ -56,10 +57,10 @@ function showPopper(popperId) {
             ],
         }
     });
-    testPopperInstance[popperId].update();
+    popperInstance[popperId].update();
 }
 function hidePopper(popperId) {
-    testPopperInstance[popperId].setOptions(function (options) {
+    popperInstance[popperId].setOptions(function (options) {
         return {
             ...options,
             modifiers: [
@@ -69,3 +70,4 @@ function hidePopper(popperId) {
         }
     });
 }
+// end: Popper

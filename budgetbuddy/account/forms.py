@@ -1,9 +1,31 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Budget, SavingsGoal, Account, Category, Tag
+from .models import Budget, SavingsGoal, Account, Category, Tag, Transaction
 from django.core.exceptions import ValidationError
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+class TransactionForm(ModelForm):
+
+    amount = forms.DecimalField(min_value=0.0)
+
+    class Meta:
+        model = Transaction
+        fields = [
+            "description",
+            "amount",
+            "transaction_type",
+            "account",
+            "category",
+            "tags"
+        ]
+    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(TransactionForm, self).__init__(*args, **kwargs)
+        # Filter the account field to only show accounts for the current user
+        self.fields['account'].queryset = Account.objects.filter(user=self.user)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
+
 
 class BudgetForm(ModelForm):
 

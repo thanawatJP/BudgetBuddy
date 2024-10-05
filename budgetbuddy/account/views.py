@@ -130,14 +130,45 @@ class HomeView(View):
         }
         return render(request, 'test.html', context)
 
+#report zone view
+class TransactionView(View):
+    def get(self, request):
+        accounts = Account.objects.filter(user=request.user)
+        transactions = Transaction.objects.filter(account__in=accounts).order_by('-create_at')
+        income = Transaction.objects.filter(create_at__day=datetime.now().day, transaction_type="income").aggregate(daily=Sum("amount"))
+        expense = Transaction.objects.filter(create_at__day=datetime.now().day, transaction_type="expense").aggregate(daily=Sum("amount"))
+        return render(request, 'transaction/transactions.html', {
+            "transactions": transactions,
+            "dailyIncome": income['daily'],
+            "dailyExpense": expense['daily']
+        })
+
+class AddTransactionView(View):
+    def get(self, request):
+        form = TransactionForm(user=request.user)
+        return render(request, 'transaction/transactionForm.html', {
+            "form": form,
+            "tag": "Add"
+            })
+    
+    def post(self, request):
+        form = TransactionForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect("/account/transaction/")
+
+        return render(request, 'transaction/transactionForm.html', {
+            "form": form,
+            "tag": "Add"
+            })
+
 #budget zone view
 class BudgetView(View):
     def get(self, request):
         budgets = Budget.objects.filter(user=request.user)
         for budget in budgets:
-            user_pk = request.user.pk
             user_accounts = request.user.account_set.all()
-            transaction = Transaction.objects.filter(account__in=user_accounts, create_at__month=datetime.now().month, transaction_type='expense').aggregate(expense=Sum("amount"))
+            transaction = Transaction.objects.filter(category=budget.category, account__in=user_accounts, create_at__month=datetime.now().month, transaction_type='expense').aggregate(expense=Sum("amount"))
             if transaction['expense'] is None:
                 budget.expense = 0
             else:
@@ -208,10 +239,11 @@ class AddSavingView(View):
         form = SavingForm()
         return render(request, 'saving/addSaving.html', {"form": form})
 
+
 #account zone view
 class AccountView(View):
     def get(self, request):
-        accounts = Account.objects.filter()
+        accounts = Account.objects.filter(user=request.user)
         for account in accounts:
             income = Transaction.objects.filter(account=account, transaction_type="income").aggregate(income=Sum("amount"))
             expense = Transaction.objects.filter(account=account, transaction_type="expense").aggregate(expense=Sum("amount"))
@@ -224,11 +256,11 @@ class AccountView(View):
             else:
                 expense = expense['expense']
             account.balance = income-expense
-            lastestDate = Transaction.objects.order_by('-create_at').first()
+            lastestDate = Transaction.objects.filter(account=account).order_by('-create_at').first()
             if lastestDate is None:
                 account.lastest = account.create_at
             else:
-                account.lastest = lastestDate
+                account.lastest = lastestDate.create_at
         return render(request, 'account/account.html', {"accounts": accounts})
 
     def delete(self, request, account_id):
@@ -244,7 +276,7 @@ class AddAccountView(View):
         form = AccountForm()
         return render(request, 'account/accountForm.html', {
             "form": form,
-            "tag": "Add New Account"}
+            "tag": "Add"}
         )
 
     def post(self, request):
@@ -256,7 +288,7 @@ class AddAccountView(View):
         
         return render(request, 'account/accountForm.html', {
             "form": form,
-            "tag": "Add New Account"}
+            "tag": "Add"}
         )
 
 class EditAccountView(View):
@@ -265,7 +297,7 @@ class EditAccountView(View):
         form = AccountForm(instance=account)
         return render(request, 'account/accountForm.html', {
             "form": form,
-            "tag": "Edit Account"}
+            "tag": "Edit"}
         )
 
     def post(self, request, account_id):
@@ -278,7 +310,7 @@ class EditAccountView(View):
         
         return render(request, 'account/accountForm.html', {
             "form": form,
-            "tag": "Edit Account"}
+            "tag": "Edit"}
         )
 
 
