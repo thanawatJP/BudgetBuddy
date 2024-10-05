@@ -47,7 +47,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for account in accounts %}
+                {% for account in accounts|dictsort:"id" %}
                 <tr class="bg-white border-b">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {{ forloop.counter }}
@@ -59,7 +59,7 @@
                         {{ account.balance }}
                     </td>
                     <td class="px-6 py-4">
-                        {{ account.lastest|date:"M. d, Y, h:i:s A" }}
+                        {{ account.lastest|date:"M. d, Y, h:i A" }}
                     </td>
                     <td class="py-2 px-4">
                         <div class="dropdown">

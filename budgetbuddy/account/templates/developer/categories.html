@@ -58,7 +58,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for category in categories %}
+                {% for category in categories|dictsort:"id" %}
                 <tr class="bg-white border-b">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {{ forloop.counter }}

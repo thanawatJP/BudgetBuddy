@@ -140,7 +140,8 @@ class TransactionView(View):
         return render(request, 'transaction/transactions.html', {
             "transactions": transactions,
             "dailyIncome": income['daily'],
-            "dailyExpense": expense['daily']
+            "dailyExpense": expense['daily'],
+            "path": request.path
         })
     
     def delete(self, request, transaction_id):
@@ -156,7 +157,8 @@ class AddTransactionView(View):
         form = TransactionForm(user=request.user)
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
-            "tag": "Add"
+            "tag": "Add",
+            "path": request.path
             })
     
     def post(self, request):
@@ -167,7 +169,8 @@ class AddTransactionView(View):
 
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
-            "tag": "Add"
+            "tag": "Add",
+            "path": request.path
             })
 
 class EditTransactionView(View):
@@ -176,7 +179,8 @@ class EditTransactionView(View):
         form = TransactionForm(instance=transaction, user=request.user)
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
-            "tag": "Edit"
+            "tag": "Edit",
+            "path": request.path
             })
     
     def post(self, request, transaction_id):
@@ -188,7 +192,8 @@ class EditTransactionView(View):
 
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
-            "tag": "Edit"
+            "tag": "Edit",
+            "path": request.path
             })
 
 #budget zone view
@@ -203,7 +208,8 @@ class BudgetView(View):
             else:
                 budget.expense = transaction['expense']
         return render(request, 'budget/budget.html', {
-            "budgets": budgets
+            "budgets": budgets,
+            "path": request.path
         })
     
     def delete(self, request, budget_id):
@@ -219,7 +225,8 @@ class AddBudgetView(View):
         form = BudgetForm(user=request.user)
         return render(request, 'budget/budgetForm.html', {
             "form": form,
-            "tag": "Add"
+            "tag": "Add",
+            "path": request.path
         })
 
     def post(self, request):
@@ -231,8 +238,9 @@ class AddBudgetView(View):
         
         return render(request, 'budget/budgetForm.html',{
             "form": form,
-            "tag": "Add"}
-        )
+            "tag": "Add",
+            "path": request.path
+            })
 
 class EditBudgetView(View):
     def get(self, request, budget_id):
@@ -241,7 +249,8 @@ class EditBudgetView(View):
 
         return render(request, 'budget/budgetForm.html', {
             "form": form,
-            "tag": "Edit"
+            "tag": "Edit",
+            "path": request.path
             })
 
     def post(self, request, budget_id):
@@ -254,19 +263,25 @@ class EditBudgetView(View):
         
         return render(request, 'budget/budgetForm.html', {
             "form": form,
-            "tag": "Edit"
+            "tag": "Edit",
+            "path": request.path
             })
 
 
 #saving zone view
 class SavingView(View):
     def get(self, request):
-        return render(request, 'saving/saving.html')
+        return render(request, 'saving/saving.html', {
+            "path": request.path
+        })
 
 class AddSavingView(View):
     def get(self, request):
         form = SavingForm()
-        return render(request, 'saving/addSaving.html', {"form": form})
+        return render(request, 'saving/addSaving.html', {
+            "form": form,
+            "path": request.path
+            })
 
 
 #account zone view
@@ -290,7 +305,10 @@ class AccountView(View):
                 account.lastest = account.create_at
             else:
                 account.lastest = lastestDate.create_at
-        return render(request, 'account/account.html', {"accounts": accounts})
+        return render(request, 'account/account.html', {
+            "accounts": accounts,
+            "path": request.path
+            })
 
     def delete(self, request, account_id):
         try:
@@ -305,8 +323,9 @@ class AddAccountView(View):
         form = AccountForm()
         return render(request, 'account/accountForm.html', {
             "form": form,
-            "tag": "Add"}
-        )
+            "tag": "Add",
+            "path": request.path
+            })
 
     def post(self, request):
         form = AccountForm(request.POST)
@@ -317,8 +336,9 @@ class AddAccountView(View):
         
         return render(request, 'account/accountForm.html', {
             "form": form,
-            "tag": "Add"}
-        )
+            "tag": "Add",
+            "path": request.path
+            })
 
 class EditAccountView(View):
     def get(self, request, account_id):
@@ -326,8 +346,9 @@ class EditAccountView(View):
         form = AccountForm(instance=account)
         return render(request, 'account/accountForm.html', {
             "form": form,
-            "tag": "Edit"}
-        )
+            "tag": "Edit",
+            "path": request.path
+            })
 
     def post(self, request, account_id):
         account = Account.objects.get(pk=account_id)
@@ -339,14 +360,17 @@ class EditAccountView(View):
         
         return render(request, 'account/accountForm.html', {
             "form": form,
-            "tag": "Edit"}
-        )
+            "tag": "Edit",
+            "path": request.path
+            })
 
 
 #notify zone view
 class NotifyView(View):
     def get(self, request):
-        return render(request, 'notify.html')
+        return render(request, 'notify.html', {
+            "path": request.path
+        })
 
 
 
@@ -355,7 +379,10 @@ class NotifyView(View):
 class CategoriesDevView(View):
     def get(self, request):
         categories = Category.objects.all()
-        return render(request, 'developer/categories.html', {"categories": categories})
+        return render(request, 'developer/categories.html', {
+            "categories": categories,
+            "path": request.path
+        })
 
     def delete(self, request, category_id):
         try:
@@ -370,8 +397,9 @@ class AddCategoriesDevView(View):
         form = CategoryDevForm()
         return render(request, 'developer/categoriesForm.html', {
             "form": form,
-            "tag": "Add"}
-        )
+            "tag": "Add",
+            "path": request.path
+            })
     
     def post(self, request):
         form = CategoryDevForm(request.POST)
@@ -382,8 +410,9 @@ class AddCategoriesDevView(View):
         
         return render(request, 'developer/categoriesForm.html', {
             "form": form,
-            "tag": "Add"}
-        )
+            "tag": "Add",
+            "path": request.path
+            })
 
 class EditCategoriesDevView(View):
     def get(self, request, category_id):
@@ -391,8 +420,9 @@ class EditCategoriesDevView(View):
         form = CategoryDevForm(instance=category)
         return render(request, 'developer/categoriesForm.html', {
             "form": form,
-            "tag": "Edit"}
-        )
+            "tag": "Edit",
+            "path": request.path
+            })
     
     def post(self, request, category_id):
         category = Category.objects.get(pk=category_id)
@@ -404,14 +434,18 @@ class EditCategoriesDevView(View):
         
         return render(request, 'developer/categoriesForm.html', {
             "form": form,
-            "tag": "Edit"}
-        )
+            "tag": "Edit",
+            "path": request.path
+            })
 
 ## tags
 class TagsDevView(View):
     def get(self, request):
         tags = Tag.objects.all()
-        return render(request, 'developer/tags.html', {"tags": tags})
+        return render(request, 'developer/tags.html', {
+            "tags": tags,
+            "path": request.path
+            })
 
     def delete(self, request, tag_id):
         try:
@@ -426,8 +460,9 @@ class AddTagsDevView(View):
         form = TagDevForm()
         return render(request, 'developer/tagsForm.html',{
             "form": form,
-            "tag": "Add"}
-        )
+            "tag": "Add",
+            "path": request.path
+            })
     
     def post(self, request):
         form = TagDevForm(request.POST)
@@ -438,8 +473,9 @@ class AddTagsDevView(View):
         
         return render(request, 'developer/tagsForm.html',{
             "form": form,
-            "tag": "Add"}
-        )
+            "tag": "Add",
+            "path": request.path
+            })
 
 class EditTagsDevView(View):
     def get(self, request, tag_id):
@@ -447,8 +483,9 @@ class EditTagsDevView(View):
         form = TagDevForm(instance=tag)
         return render(request, 'developer/tagsForm.html',{
             "form": form,
-            "tag": "Edit"}
-        )
+            "tag": "Edit",
+            "path": request.path
+            })
     
     def post(self, request, tag_id):
         tag = Tag.objects.get(pk=tag_id)
@@ -460,5 +497,6 @@ class EditTagsDevView(View):
         
         return render(request, 'developer/tagsForm.html',{
             "form": form,
-            "tag": "Edit"}
-        )
+            "tag": "Edit",
+            "path": request.path
+            })

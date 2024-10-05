@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 
 {% comment %} <body class="text-gray-800 font-inter"> {% endcomment %}
     <!-- start: Sidebar -->
@@ -8,14 +9,14 @@
             <span class="text-lg font-bold text-white ml-3">BudgetBuddy</span>
         </a>
         <ul class="mt-4">
-            <li class="mb-1 group active">
-                <a href="{% url 'home' %}" class="flex items-center py-2 px-4 text-white hover:bg-gray-950 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
+            <li class="mb-1 {% if path == '/account/' %}group active{% endif %}">
+                <a href="{% url 'home' %}" class="flex items-center py-2 px-4 text-white hover:bg-gray-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-home-2-line mr-3 text-xl"></i>
                     <span class="text-sm">Home</span>
                 </a>
             </li>
-            <li class="mb-1 group"></li>
-                <a href="{% url 'transaction' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
+            <li class="mb-1 {% if path|starts_with:'/account/transaction/' %}group active{% endif %}">
+                <a href="{% url 'transaction' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-900 group-[.active]:text-white">
                     <i class="ri-file-chart-line mr-3 text-xl"></i>
                     <span class="text-sm">Transaction</span>
                 </a>
@@ -34,31 +35,31 @@
                     </li>
                 </ul>
             </li> {% endcomment %}
-            <li class="mb-1 group"></li>
+            <li class="mb-1 {% if path|starts_with:'/account/budget/' %}group active{% endif %}">
                 <a href="{% url 'budget' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
                     <i class="ri-hand-coin-line mr-3 text-xl"></i>
                     <span class="text-sm">Budget</span>
                 </a>
             </li>
-            <li class="mb-1 group"></li>
+            <li class="mb-1 {% if path|starts_with:'/account/saving/' %}group active{% endif %}">
                 <a href="{% url 'saving' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
                     <i class="ri-bank-line mr-3 text-xl"></i>
                     <span class="text-sm">Saving</span>
                 </a>
             </li>
-            <li class="mb-1 group"></li>
+            <li class="mb-1 {% if path|starts_with:'/account/account/' %}group active{% endif %}">
                 <a href="{% url 'account' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
                     <i class="ri-file-user-line mr-3 text-xl"></i>
                     <span class="text-sm">Account</span>
                 </a>
             </li>
-            <li class="mb-1 group active"></li>
+            <li class="mb-1 {% if path|starts_with:'/account/notify/' %}group active{% endif %}">
                 <a href="{% url 'notify' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
                     <i class="ri-notification-line mr-3 text-xl"></i>
                     <span class="text-sm">Notify</span>
                 </a>
             </li>
-            <li class="mb-1 group active"></li>
+            <li class="mb-1 {% if path|starts_with:'/account/developer/' %}group active{% endif %}">
                 <a href="{% url 'categoriesDev' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
                     <i class="ri-admin-line mr-3 text-xl"></i>
                     <span class="text-sm">Developer</span>
