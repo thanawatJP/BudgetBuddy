@@ -9,6 +9,7 @@ from django.core.paginator import Paginator
 from django.db.models.functions import TruncMonth
 from datetime import datetime, timedelta
 from django.utils import timezone
+from .notifications import Notify
 
 from io import BytesIO
 from django.template.loader import get_template
@@ -240,7 +241,10 @@ class AddTransactionView(View):
     def post(self, request):
         form = TransactionForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save()
+            transaction = form.save()
+
+            notification = Notify(transaction=transaction, user=request.user)
+            notification.execute()
             return redirect("/account/transaction/")
 
         return render(request, 'transaction/transactionForm.html', {
