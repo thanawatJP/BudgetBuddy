@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Report{% endblock %}
+{% block title %}Transaction{% endblock %}
 
 {% block content %}
  
@@ -57,7 +57,7 @@
                         No.
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Date
+                        Date&Time
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Name
@@ -111,7 +111,9 @@
                         {{ transaction.amount }}
                     </td>
                     <td class="px-6 py-4">
-                        {{ transaction.tag }}
+                        {% for tag in transaction.tags.all %}
+                            {{ tag }}
+                        {% endfor %}
                     </td>
                     <td class="py-2 px-4">
                         <div class="dropdown">
@@ -139,6 +141,6 @@
 {% block scripts %}
 <script src="https://unpkg.com/@popperjs/core@2"></script>
 <script src="{% static 'js/popperScript.js' %}"></script>
-<script src="{% static 'js/accountScript.js' %}"></script>
+<script src="{% static 'js/transactionScript.js' %}"></script>
 {% endblock %}
 

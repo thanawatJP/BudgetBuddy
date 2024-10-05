@@ -6,8 +6,9 @@ urlpatterns = [
     path('', HomeView.as_view(), name="home"),
     #report
     path('transaction/', TransactionView.as_view(), name="transaction"),
+    path('transaction/delete/<int:transaction_id>/', TransactionView.as_view(), name="transaction"),
     path('transaction/add/', AddTransactionView.as_view(), name="addTransaction"),
-    path('transaction/edit/<int:transaction_id>', TransactionView.as_view(), name="editTransaction"),
+    path('transaction/edit/<int:transaction_id>/', EditTransactionView.as_view(), name="editTransaction"),
     #budget
     path('budget/', BudgetView.as_view(), name="budget"),
     path('budget/delete/<int:budget_id>/', BudgetView.as_view(), name="deleteBudget"),

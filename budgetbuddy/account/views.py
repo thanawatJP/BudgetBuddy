@@ -142,6 +142,14 @@ class TransactionView(View):
             "dailyIncome": income['daily'],
             "dailyExpense": expense['daily']
         })
+    
+    def delete(self, request, transaction_id):
+        try:
+            transaction = Transaction.objects.get(pk=transaction_id)
+            transaction.delete()
+            return JsonResponse({"status": 200})
+        except:
+            return JsonResponse({"status": 500})
 
 class AddTransactionView(View):
     def get(self, request):
@@ -160,6 +168,27 @@ class AddTransactionView(View):
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Add"
+            })
+
+class EditTransactionView(View):
+    def get(self, request, transaction_id):
+        transaction = Transaction.objects.get(pk=transaction_id)
+        form = TransactionForm(instance=transaction, user=request.user)
+        return render(request, 'transaction/transactionForm.html', {
+            "form": form,
+            "tag": "Edit"
+            })
+    
+    def post(self, request, transaction_id):
+        transaction = Transaction.objects.get(pk=transaction_id)
+        form = TransactionForm(request.POST, instance=transaction, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect("/account/transaction/")
+
+        return render(request, 'transaction/transactionForm.html', {
+            "form": form,
+            "tag": "Edit"
             })
 
 #budget zone view
