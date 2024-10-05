@@ -1,15 +1,90 @@
 from .forms import *
 from account.models import *
 from django.db.models import *
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models.functions import TruncMonth
 from datetime import datetime, timedelta
+from django.utils import timezone
 
-# Create your views here.
+from io import BytesIO
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
+#Opens up page as PDF
+class ViewPDF(View):
+    def render_to_pdf(self, template_src, context_dict={}):
+        template = get_template(template_src)
+        html  = template.render(context_dict)
+        result = BytesIO()
+        pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+        if not pdf.err:
+            return HttpResponse(result.getvalue(), content_type='application/pdf')
+        return None
+    
+    def get(self, request, *args, **kwargs):
+        user_pk = request.user.pk
+        user_accounts = request.user.account_set.all()
+        user = User.objects.get(pk=user_pk)
+        
+        now = timezone.now()
+        
+        total_income_current = Transaction.objects.filter(
+            account__in=user_accounts,
+            create_at__year=now.year,
+            create_at__month=now.month,
+            transaction_type='income'
+        ).aggregate(sum_income=Sum('amount'))['sum_income'] or 0
+        
+        total_expense_current = Transaction.objects.filter(
+            account__in=user_accounts,
+            create_at__year=now.year,
+            create_at__month=now.month,
+            transaction_type='expense'
+        ).aggregate(sum_expense=Sum('amount'))['sum_expense'] or 0
+        
+        this_month_income = []
+        
+        if  total_income_current > 0:
+            this_month_income = Transaction.objects.filter(
+                account__in=user_accounts,
+                create_at__year=now.year,
+                create_at__month=now.month,
+                transaction_type='income'
+            ).values('category__name').annotate(
+                total_income=Sum('amount')
+            ).annotate(
+                income_percent=(F('total_income') / total_income_current) * 100
+            ).order_by('income_percent')
+
+        this_month_expense = []
+        
+        if total_expense_current > 0:
+            this_month_expense = Transaction.objects.filter(
+                account__in=user_accounts,
+                create_at__year=now.year,
+                create_at__month=now.month,
+                transaction_type='expense'
+            ).values('category__name').annotate(
+                total_expense=Sum('amount')
+            ).annotate(
+                expense_percent=(F('total_expense') / total_expense_current) * 100
+            ).order_by('expense_percent')
+
+        context = {
+            'user': user,
+            'create_at': now,
+            'this_month_income': this_month_income,
+            'this_month_expense': this_month_expense,
+            'total_income_current': total_income_current,
+            'total_expense_current': total_expense_current
+        }
+        pdf = self.render_to_pdf('pdf/monthlyreport.html', context)
+        return HttpResponse(pdf, content_type='application/pdf')
+
 class HomeView(View):
     def ensure_six_elements(self, data_list):
         # ตรวจสอบว่า list มีสมาชิกครบ 6 ตัวมั้ย
@@ -228,7 +303,6 @@ class EditBudgetView(View):
             "tag": "Edit"
             })
 
-
 #saving zone view
 class SavingView(View):
     def get(self, request):
@@ -238,7 +312,6 @@ class AddSavingView(View):
     def get(self, request):
         form = SavingForm()
         return render(request, 'saving/addSaving.html', {"form": form})
-
 
 #account zone view
 class AccountView(View):
