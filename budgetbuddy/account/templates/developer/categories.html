@@ -84,6 +84,23 @@
 
             </tbody>
         </table>
+        <div class="pagination text-center text-gray-700 mt-4">
+            <span class="step-links">
+                {% if categories.has_previous %}
+                    <a href="?page=1" class="hover:text-gray-500">&laquo; first</a>
+                    <a href="?page={{ categories.previous_page_number }}" class="hover:text-gray-500">previous</a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ categories.number }} of {{ categories.paginator.num_pages }}.
+                </span>
+        
+                {% if categories.has_next %}
+                    <a href="?page={{ categories.next_page_number }}" class="hover:text-gray-500">next</a>
+                    <a href="?page={{ categories.paginator.num_pages }}" class="hover:text-gray-500">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
 
 </main>
