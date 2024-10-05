@@ -10,74 +10,7 @@
 </head>
 <body class="text-gray-800 font-inter">
     
-    <!-- start: Sidebar -->
-    <div class="fixed left-0 top-0 w-64 h-full bg-green-700 p-4">
-        <a href="#" class="flex items-center pb-4 border-b border-b-green-600">
-            <img src="{% static 'image/logo.jpg' %}" alt="" class="w-10 h-10 rounded object-cover">
-            <span class="text-lg font-bold text-white ml-3">BudgetBuddy</span>
-        </a>
-        <ul class="mt-4">
-            <li class="mb-1 group active">
-                <a href="{% url 'home' %}" class="flex items-center py-2 px-4 text-white hover:bg-gray-950 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
-                    <i class="ri-home-2-line mr-3 text-xl"></i>
-                    <span class="text-sm">Home</span>
-                </a>
-            </li>
-            <li class="mb-1 group"></li>
-                <a href="#" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
-                    <i class="ri-file-chart-line mr-3 text-xl"></i>
-                    <span class="text-sm">Report</span>
-                </a>
-                <ul class="pl-8 mt-2 sidebar-menu">
-                    <li class="mb-3">
-                        <a href="#" class="text-white text-sm flex items-center hover:text-gray-100 before:contents-[' '] before:w-1 before:h-1 before:rounded-full before:bg-white before:mr-3">Income</a>
-                    </li>
-                    <li class="mb-3"></li>
-                        <a href="#" class="text-white text-sm flex items-center hover:text-gray-100 before:contents-[' '] before:w-1 before:h-1 before:rounded-full before:bg-white before:mr-3">Expense</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="mb-1 group"></li>
-                <a href="{% url 'budget' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
-                    <i class="ri-hand-coin-line mr-3 text-xl"></i>
-                    <span class="text-sm">Budget</span>
-                </a>
-            </li>
-            <li class="mb-1 group"></li>
-                <a href="{% url 'saving' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
-                    <i class="ri-bank-line mr-3 text-xl"></i>
-                    <span class="text-sm">Saving</span>
-                </a>
-            </li>
-            <li class="mb-1 group"></li>
-                <a href="{% url 'account' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
-                    <i class="ri-file-user-line mr-3 text-xl"></i>
-                    <span class="text-sm">Account</span>
-                </a>
-            </li>
-            <li class="mb-1 group active"></li>
-                <a href="{% url 'notify' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
-                    <i class="ri-notification-line mr-3 text-xl"></i>
-                    <span class="text-sm">Notify</span>
-                </a>
-            </li>
-        </ul>
-        <ul class="absolute bottom-4 left-4">
-            <li>
-                <a href="#" class="flex items-center py-2 px-4 text-white hover:text-gray-300">
-                    <i class="ri-settings-4-line mr-3 text-xl"></i>
-                    <span class="text-sm">Setting</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center py-2 px-4 text-white hover:text-black">
-                    <i class="ri-logout-box-line mr-3 text-xl"></i>
-                    <span class="text-sm">Log Out</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <!-- end: Sidebar -->
+    {% include 'sidebar.html' %}
     <!-- start: Main -->
     <main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-50 min-h-screen transition-all main">
         <!-- start: ez-nav -->

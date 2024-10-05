@@ -1,7 +1,7 @@
 {% load static %}
 {% load custom_filters %}
 
-{% comment %} <body class="text-gray-800 font-inter"> {% endcomment %}
+{% comment %} <body class="text-green-900 font-inter"> {% endcomment %}
     <!-- start: Sidebar -->
     <div class="fixed left-0 top-0 w-64 h-full bg-green-700 p-4">
         <a href="#" class="flex items-center pb-4 border-b border-b-green-600">
@@ -10,19 +10,19 @@
         </a>
         <ul class="mt-4">
             <li class="mb-1 {% if path == '/account/' %}group active{% endif %}">
-                <a href="{% url 'home' %}" class="flex items-center py-2 px-4 text-white hover:bg-gray-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
+                <a href="{% url 'home' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-home-2-line mr-3 text-xl"></i>
                     <span class="text-sm">Home</span>
                 </a>
             </li>
             <li class="mb-1 {% if path|starts_with:'/account/transaction/' %}group active{% endif %}">
-                <a href="{% url 'transaction' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-900 group-[.active]:text-white">
+                <a href="{% url 'transaction' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-file-chart-line mr-3 text-xl"></i>
                     <span class="text-sm">Transaction</span>
                 </a>
             </li>
             {% comment %} <li class="mb-1 group"></li>
-                <a href="{% url 'transaction' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
+                <a href="{% url 'transaction' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-file-chart-line mr-3 text-xl"></i>
                     <span class="text-sm">Transaction</span>
                 </a>
@@ -36,31 +36,31 @@
                 </ul>
             </li> {% endcomment %}
             <li class="mb-1 {% if path|starts_with:'/account/budget/' %}group active{% endif %}">
-                <a href="{% url 'budget' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
+                <a href="{% url 'budget' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-hand-coin-line mr-3 text-xl"></i>
                     <span class="text-sm">Budget</span>
                 </a>
             </li>
             <li class="mb-1 {% if path|starts_with:'/account/saving/' %}group active{% endif %}">
-                <a href="{% url 'saving' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
+                <a href="{% url 'saving' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-bank-line mr-3 text-xl"></i>
                     <span class="text-sm">Saving</span>
                 </a>
             </li>
             <li class="mb-1 {% if path|starts_with:'/account/account/' %}group active{% endif %}">
-                <a href="{% url 'account' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
+                <a href="{% url 'account' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-file-user-line mr-3 text-xl"></i>
                     <span class="text-sm">Account</span>
                 </a>
             </li>
             <li class="mb-1 {% if path|starts_with:'/account/notify/' %}group active{% endif %}">
-                <a href="{% url 'notify' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
+                <a href="{% url 'notify' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-notification-line mr-3 text-xl"></i>
                     <span class="text-sm">Notify</span>
                 </a>
             </li>
             <li class="mb-1 {% if path|starts_with:'/account/developer/' %}group active{% endif %}">
-                <a href="{% url 'categoriesDev' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-gray-800 group-[.active]:text-white">
+                <a href="{% url 'categoriesDev' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-admin-line mr-3 text-xl"></i>
                     <span class="text-sm">Developer</span>
                 </a>

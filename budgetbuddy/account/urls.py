@@ -37,4 +37,6 @@ urlpatterns = [
     path('developer/tags/add', AddTagsDevView.as_view(), name="addTagsDev"),
     path('developer/tags/edit/<int:tag_id>/', EditTagsDevView.as_view(), name="editTagDev"),
 
+    #PDF FILE
+    path('monthlyreport/', ViewPDF.as_view(), name="monthly-report"),
 ]
