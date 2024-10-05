@@ -212,10 +212,13 @@ class TransactionView(View):
     def get(self, request):
         accounts = Account.objects.filter(user=request.user)
         transactions = Transaction.objects.filter(account__in=accounts).order_by('-create_at')
+        paginator = Paginator(transactions, 10)
+        page_number = request.GET.get('page')
+        transactions_list = paginator.get_page(page_number)
         income = Transaction.objects.filter(create_at__day=datetime.now().day, transaction_type="income").aggregate(daily=Sum("amount"))
         expense = Transaction.objects.filter(create_at__day=datetime.now().day, transaction_type="expense").aggregate(daily=Sum("amount"))
         return render(request, 'transaction/transactions.html', {
-            "transactions": transactions,
+            "transactions": transactions_list,
             "dailyIncome": income['daily'],
             "dailyExpense": expense['daily'],
             "path": request.path
@@ -457,8 +460,11 @@ class NotifyView(View):
 class CategoriesDevView(View):
     def get(self, request):
         categories = Category.objects.all()
+        paginator = Paginator(categories, 10)
+        page_number = request.GET.get('page')
+        categories_list = paginator.get_page(page_number)
         return render(request, 'developer/categories.html', {
-            "categories": categories,
+            "categories": categories_list,
             "path": request.path
         })
 
@@ -520,8 +526,11 @@ class EditCategoriesDevView(View):
 class TagsDevView(View):
     def get(self, request):
         tags = Tag.objects.all()
+        paginator = Paginator(tags, 10)
+        page_number = request.GET.get('page')
+        tags_list = paginator.get_page(page_number)
         return render(request, 'developer/tags.html', {
-            "tags": tags,
+            "tags": tags_list,
             "path": request.path
             })
 
