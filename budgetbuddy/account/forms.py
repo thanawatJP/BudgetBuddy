@@ -2,7 +2,61 @@ from django import forms
 from django.forms import ModelForm
 from .models import Budget, SavingsGoal, Account, Category, Tag, Transaction
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 from datetime import date
+
+class ResetPasswordForm(ModelForm):
+    old_password = forms.CharField(widget=forms.PasswordInput)
+    new_password = forms.CharField(widget=forms.PasswordInput)
+    confirm_password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = [
+            "old_password",
+            "new_password",
+            "confirm_password",
+        ]
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get("new_password")
+        confirm_password = cleaned_data.get("confirm_password")
+        print(f"New Password: {new_password}, Confirm Password: {confirm_password}")
+        if new_password != confirm_password:
+            raise forms.ValidationError("New password and confirmation do not match.")
+        return cleaned_data
+    
+    def clean_old_password(self):
+        old_password = self.cleaned_data.get('old_password')
+        user = self.instance
+        if not user.check_password(old_password):
+            raise forms.ValidationError("Wrong password")
+    
+class EditProfileForm(ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "email"
+        ]
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username == self.instance.username:
+            return username
+        
+        if User.objects.exclude(pk=self.instance.pk).filter(username=username).exists():
+            raise forms.ValidationError("Username already exists. Please choose a different one.")
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email == self.instance.email:
+            return email
+        
+        if User.objects.exclude(pk=self.instance.pk).filter(email=email).exists():
+            raise forms.ValidationError("Email already exists. Please choose a different one.")
+        return email
 
 class TransactionForm(ModelForm):
 

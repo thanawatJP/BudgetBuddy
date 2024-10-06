@@ -10,10 +10,11 @@ from django.db.models.functions import TruncMonth
 from datetime import datetime, timedelta
 from django.utils import timezone
 from .notifications import Notify
-
+from django.contrib import messages
 from io import BytesIO
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+from django.contrib.auth import login
 
 #Opens up page as PDF
 class ViewPDF(View):
@@ -164,6 +165,7 @@ class HomeView(View):
             .order_by('month')
         )
         graph_total_income = self.ensure_six_elements([float(income['total_income']) for income in six_month_income])
+        print(six_month_income)
         # Query รายจ่ายในแต่ละเดือน
         six_month_expense = (
             Transaction.objects
@@ -748,3 +750,56 @@ class EditTagsDevView(View):
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
+
+class EditProfileView(View):
+    def get(self, request):
+        user = request.user
+        form = EditProfileForm()
+        context = {
+            'path': request.path,
+            'user': user,
+            'form': form
+        }
+        return render(request, 'setting/editprofile.html', context)
+
+    def post(self, request):
+        user = request.user
+        form = EditProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('edit-profile')
+        context = {
+            'path': request.path,
+            'user': user,
+            'form': form
+        }
+        return render(request, 'setting/editprofile.html', context)
+
+class ResetPassWordView(View):
+    def get(self, request):
+        user = request.user
+        form = ResetPasswordForm()
+        context = {
+            'path': request.path,
+            'form': form,
+            'user': user
+        }
+        return render(request, 'setting/resetpassword.html', context)
+    
+    def post(self, request):
+        user = request.user
+        form = ResetPasswordForm(request.POST, instance=user)
+        if form.is_valid():
+            new_password = form.cleaned_data['new_password']
+            request.user.set_password(new_password)
+            request.user.save()
+            login(request, request.user)
+            messages.success(request, "Reset password successfully!")
+            return redirect('edit-profile')
+        context = {
+                'path': request.path,
+                'user': user,
+                'form': form
+            }
+        return render(request, 'setting/resetpassword.html', context)

@@ -28,6 +28,10 @@ urlpatterns = [
     path('notify/', NotifyView.as_view(), name="notify"),
     path('notify/delete/<int:notification_id>/', NotifyView.as_view(), name="deleteNotify"),
     
+    #Edit Profile
+    path('editprofile/', EditProfileView.as_view(), name="edit-profile"),
+    path('editprofile/resetpassword', ResetPassWordView.as_view(), name="reset-password"),
+    
     # dev zone
     ## categories
     path('developer/categories/', CategoriesDevView.as_view(), name="categoriesDev"),
