@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Saving{% endblock %}
 
@@ -23,7 +24,8 @@
         </a>
     </div>
     {% comment %} if no budget create {% endcomment %}
-    {% comment %} <div class="relative text-2xl w-full flex justify-center h-screen items-center">
+    {% if savings|length == 0 %}
+    <div class="relative text-2xl w-full flex justify-center h-screen items-center">
         <div class="absolute inset-0 flex justify-center items-center">
             <svg viewBox="-0.5 -0.5 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" id="Piggy-Bank--Streamline-Iconoir" height="128" width="128">
                 <desc>Piggy Bank Streamline Icon: https://streamlinehq.com</desc>
@@ -36,60 +38,55 @@
         <span class="relative text-gray-400 px-4 py-2 z-10">
             กด Add New เพื่อสร้าง Saving ใหม่เพื่อตั้งเป้าหมายการออมเงินของคุณ
         </span>
-    </div> {% endcomment %}
-    
-
-    {% comment %} if have budget {% endcomment %}
-    <div class="p-4 grid grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4">
-        <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
-            <div class="flex justify-between mb-6">
-                <div>
-                    <div class="text-2xl font-semibold mb-1">Name</div>
-                    <div class="text-sm font-medium text-gray-400">target date:</div>
-                </div>
-            </div>
-            <div class="flex items-center">
-                <div class="w-full bg-gray-100 rounded-full h-4">
-                    <div class="h-full bg-blue-500 rounded-full p-1" style="width: 60%;">
-                        <div class="w-2 h-2 rounded-full bg-white ml-auto"></div>
-                    </div>
-                </div>
-                <span class="text-sm font-medium text-gray-600 ml-4">60%</span>
-            </div>
-        </div>
-        <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
-            <div class="flex justify-between mb-6">
-                <div>
-                    <div class="text-2xl font-semibold mb-1">Name</div>
-                    <div class="text-sm font-medium text-gray-400">target date:</div>
-                </div>
-            </div>
-            <div class="flex items-center">
-                <div class="w-full bg-gray-100 rounded-full h-4">
-                    <div class="h-full bg-blue-500 rounded-full p-1" style="width: 60%;">
-                        <div class="w-2 h-2 rounded-full bg-white ml-auto"></div>
-                    </div>
-                </div>
-                <span class="text-sm font-medium text-gray-600 ml-4">60%</span>
-            </div>
-        </div>
-        <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
-            <div class="flex justify-between mb-6">
-                <div>
-                    <div class="text-2xl font-semibold mb-1">Name</div>
-                    <div class="text-sm font-medium text-gray-400">target date:</div>
-                </div>
-            </div>
-            <div class="flex items-center">
-                <div class="w-full bg-gray-100 rounded-full h-4">
-                    <div class="h-full bg-blue-500 rounded-full p-1" style="width: {{40}}%;">
-                        <div class="w-2 h-2 rounded-full bg-white ml-auto"></div>
-                    </div>
-                </div>
-                <span class="text-sm font-medium text-gray-600 ml-4">60%</span>
-            </div>
-        </div>
     </div>
+    {% comment %} if have budget {% endcomment %}
+    {% else %}
+        <div class="p-4 grid grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4">
+        {% for saving in savings %}
+                <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
+                    <div class="flex justify-between mb-6">
+                        <div class="w-full">
+                            <div class="flex justify-between">
+                                <div class="text-2xl font-semibold mb-1">{{ saving.name }}</div>
+                                <div class="flex">
+                                    <button type="button" class="dropdown-toggle text-gray-600 hover:text-blue-800 text-md w-6 h-6 rounded flex items-center justify-center bg-gray-50 mr-3">
+                                        <i class="ri-add-line"></i>
+                                    </button>
+                                    <div class="dropdown">
+                                        <button type="button" class="dropdown-toggle text-gray-600 hover:text-blue-800 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
+                                        <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
+                                            <li>
+                                                <a href="{% url 'editSaving' saving.id %}" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Update</a>
+                                            </li>
+                                            <li>
+                                                <button type="button" onclick="deleteSaving({{ saving.id }}, '{{csrf_token}}')" class="delete w-full flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-sm font-medium text-gray-400">Target Date: {{ saving.target_date|date:"M. d, Y" }}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-full bg-gray-100 rounded-full h-4">
+                            <div class="h-full bg-blue-500 rounded-full p-1" style="width: {{ saving.percent }}%;">
+                                <div class="w-2 h-2 rounded-full bg-white ml-auto"></div>
+                            </div>
+                        </div>
+                        <span class="text-sm font-medium text-gray-600 ml-4">{{ saving.percent }}%</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 </main>
 
 {% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="{% static 'js/popperScript.js' %}"></script>
+<script src="{% static 'js/savingScript.js' %}"></script>
+{% endblock %}
+

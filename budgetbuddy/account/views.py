@@ -386,16 +386,70 @@ class EditBudgetView(View):
 #saving zone view
 class SavingView(View):
     def get(self, request):
+        savings = SavingsGoal.objects.filter(user=request.user)
+        for saving in savings:
+            saving.percent = (saving.current_amount/saving.target_amount)*100
+
         return render(request, 'saving/saving.html', {
+            "savings": savings,
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
         })
+    
+    def delete(self, request, saving_id):
+        try:
+            saving = SavingsGoal.objects.get(pk=saving_id)
+            saving.delete()
+            return JsonResponse({"status": 200})
+        except:
+            return JsonResponse({"status": 500})
 
 class AddSavingView(View):
     def get(self, request):
-        form = SavingForm()
-        return render(request, 'saving/addSaving.html', {
+        form = SavingForm(user=request.user)
+        return render(request, 'saving/savingForm.html', {
             "form": form,
+            "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+            "path": request.path
+            })
+    
+    def post(self, request):
+        form = SavingForm(request.POST, user=request.user)
+
+        if form.is_valid():
+            SavingsGoal.objects.create(user=request.user, **form.cleaned_data)
+            return redirect("/account/saving/")
+
+        return render(request, 'saving/savingForm.html', {
+            "form": form,
+            "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+            "path": request.path
+            })
+
+class EditSavingView(View):
+    def get(self, request, saving_id):
+        saving = SavingsGoal.objects.get(pk=saving_id)
+        form = SavingForm(instance=saving, user=request.user)
+        return render(request, 'saving/savingForm.html', {
+            "form": form,
+            "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+            "path": request.path
+            })
+    
+    def post(self, request, saving_id):
+        saving = SavingsGoal.objects.get(pk=saving_id)
+        form = SavingForm(request.POST, instance=saving, user=request.user)
+
+        if form.is_valid():
+            form.save()
+            return redirect("/account/saving/")
+
+        return render(request, 'saving/savingForm.html', {
+            "form": form,
+            "tag": "Add",
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })

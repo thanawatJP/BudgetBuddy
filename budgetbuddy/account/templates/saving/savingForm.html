@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Add Saving{% endblock %}
+{% block title %}{{ tag }} Saving{% endblock %}
 
 {% block content %}
 <main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-50 min-h-screen transition-all main">
@@ -14,7 +14,7 @@
                 <a href="{% url 'saving' %}" class="text-gray-400 hover:text-gray-600 font-medium">Saving</a>
             </li>
             <li class="text-gray-600 mr-2 font-medium">/</li>
-            <li class="text-gray-600 mr-2 font-medium">Add</li>
+            <li class="text-gray-600 mr-2 font-medium">{{ tag }}</li>
         </ul>
     </div>
 
@@ -22,7 +22,11 @@
         <div class="w-2/4 py-2 px-6 bg-white flex items-center shadow-md shadow-black/5 sticky top-0 left-0 z-30 pt-3 pb-3 rounded-lg border border-gray-600 rounded-md">
             <form method="post" class="p-6 w-full">
                 <div class="mt-3 mb-6">
+                    {% if tag == "Add" %}
                     Add New Saving
+                    {% elif tag == "Edit" %}
+                    Edit Saving
+                    {% endif%}
                 </div>
                 <hr class="mb-6" />
                 {% csrf_token %}

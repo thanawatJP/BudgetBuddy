@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from .models import Budget, SavingsGoal, Account, Category, Tag, Transaction
 from django.core.exceptions import ValidationError
+from datetime import date
 
 class TransactionForm(ModelForm):
 
@@ -77,9 +78,31 @@ class SavingForm(ModelForm):
         }
     
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
         super(SavingForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
+    
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+
+        if self.instance.pk is None:
+            # กรณีสร้างใหม่
+            if SavingsGoal.objects.filter(name=name, user=self.user).exists():
+                raise ValidationError("คุณใช้ชื่อนี้ ในการสร้างการสะสมเงินไปแล้ว")
+        else:
+            # สำหรับ edit
+            oldname = self.instance.name
+            if oldname != name:
+                if SavingsGoal.objects.filter(name=name, user=self.instance.user).exists():
+                    raise ValidationError("คุณใช้ชื่อนี้ ในการสร้างการสะสมเงินไปแล้ว")
+        return name
+    
+    def clean_target_date(self):
+        target_date = self.cleaned_data["target_date"]
+        if target_date < date.today():
+            raise ValidationError("วันที่ของคุณเป็นอดีต")
+        return target_date
 
 class AccountForm(ModelForm):
 

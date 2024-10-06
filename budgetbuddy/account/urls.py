@@ -16,7 +16,9 @@ urlpatterns = [
     path('budget/edit/<int:budget_id>/', EditBudgetView.as_view(), name="editBudget"),
     #saving
     path('saving/', SavingView.as_view(), name="saving"),
+    path('saving/delete/<int:saving_id>/', SavingView.as_view(), name="deleteSaving"),
     path('saving/add/', AddSavingView.as_view(), name="addSaving"),
+    path('saving/edit/<int:saving_id>/', EditSavingView.as_view(), name="editSaving"),
     #account
     path('account/', AccountView.as_view(), name="account"),
     path('account/add/', AddAccountView.as_view(), name="addAccount"),
