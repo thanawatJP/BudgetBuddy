@@ -24,6 +24,7 @@ urlpatterns = [
     path('account/edit/<int:account_id>/', EditAccountView.as_view(), name="editAccount"),
     #notify
     path('notify/', NotifyView.as_view(), name="notify"),
+    path('notify/delete/<int:notification_id>/', NotifyView.as_view(), name="deleteNotify"),
     
     # dev zone
     ## categories

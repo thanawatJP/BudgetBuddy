@@ -54,9 +54,16 @@
                 </a>
             </li>
             <li class="mb-1 {% if path|starts_with:'/account/notify/' %}group active{% endif %}">
-                <a href="{% url 'notify' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
+                <a href="{% url 'notify' %}" class="flex items-center justify-between py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
+                    <div class="flex items-center">
                     <i class="ri-notification-line mr-3 text-xl"></i>
                     <span class="text-sm">Notify</span>
+                    </div>
+                    {% if numNotify != 0 %}
+                        <span class="flex items-center justify-center bg-red-600 text-white h-5 w-5 text-xs font-bold rounded-full ">
+                            {{ numNotify }}
+                        </span>
+                    {% endif %}
                 </a>
             </li>
             <li class="mb-1 {% if path|starts_with:'/account/developer/' %}group active{% endif %}">

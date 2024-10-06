@@ -203,6 +203,7 @@ class HomeView(View):
             'current_month_income_sum': current_month_income_sum,
             'current_month_expense_sum': current_month_expense_sum,
             'selected_account_id': selected_account_id,
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             'path': request.path
         }
         return render(request, 'test.html', context)
@@ -221,6 +222,7 @@ class TransactionView(View):
             "transactions": transactions_list,
             "dailyIncome": income['daily'],
             "dailyExpense": expense['daily'],
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
         })
     
@@ -238,6 +240,7 @@ class AddTransactionView(View):
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
     
@@ -253,6 +256,7 @@ class AddTransactionView(View):
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -263,6 +267,7 @@ class EditTransactionView(View):
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Edit",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
     
@@ -276,6 +281,7 @@ class EditTransactionView(View):
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Edit",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -292,6 +298,7 @@ class BudgetView(View):
                 budget.expense = transaction['expense']
         return render(request, 'budget/budget.html', {
             "budgets": budgets,
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
         })
     
@@ -309,6 +316,7 @@ class AddBudgetView(View):
         return render(request, 'budget/budgetForm.html', {
             "form": form,
             "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
         })
 
@@ -322,6 +330,7 @@ class AddBudgetView(View):
         return render(request, 'budget/budgetForm.html',{
             "form": form,
             "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -333,6 +342,7 @@ class EditBudgetView(View):
         return render(request, 'budget/budgetForm.html', {
             "form": form,
             "tag": "Edit",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -347,6 +357,7 @@ class EditBudgetView(View):
         return render(request, 'budget/budgetForm.html', {
             "form": form,
             "tag": "Edit",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -354,6 +365,7 @@ class EditBudgetView(View):
 class SavingView(View):
     def get(self, request):
         return render(request, 'saving/saving.html', {
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
         })
 
@@ -362,6 +374,7 @@ class AddSavingView(View):
         form = SavingForm()
         return render(request, 'saving/addSaving.html', {
             "form": form,
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -388,6 +401,7 @@ class AccountView(View):
                 account.lastest = lastestDate.create_at
         return render(request, 'account/account.html', {
             "accounts": accounts,
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -405,6 +419,7 @@ class AddAccountView(View):
         return render(request, 'account/accountForm.html', {
             "form": form,
             "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -418,6 +433,7 @@ class AddAccountView(View):
         return render(request, 'account/accountForm.html', {
             "form": form,
             "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -428,6 +444,7 @@ class EditAccountView(View):
         return render(request, 'account/accountForm.html', {
             "form": form,
             "tag": "Edit",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -442,6 +459,7 @@ class EditAccountView(View):
         return render(request, 'account/accountForm.html', {
             "form": form,
             "tag": "Edit",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -449,9 +467,24 @@ class EditAccountView(View):
 #notify zone view
 class NotifyView(View):
     def get(self, request):
+        # อัปเดต is_read เป็น True สำหรับ notifications ที่ยังไม่ได้อ่าน
+        Notification.objects.filter(user=request.user).update(is_read=True)
+    
+        notifications = Notification.objects.filter(user=request.user, is_delete=False).order_by('-notification_date')
         return render(request, 'notify.html', {
+            "notifications": notifications,
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
         })
+
+    def delete(self, request, notification_id):
+        try:
+            notification = Notification.objects.get(pk=notification_id)
+            notification.is_delete = True
+            notification.save()
+            return JsonResponse({"status": 200})
+        except:
+            return JsonResponse({"status": 500})
 
 
 
@@ -465,6 +498,7 @@ class CategoriesDevView(View):
         categories_list = paginator.get_page(page_number)
         return render(request, 'developer/categories.html', {
             "categories": categories_list,
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
         })
 
@@ -482,6 +516,7 @@ class AddCategoriesDevView(View):
         return render(request, 'developer/categoriesForm.html', {
             "form": form,
             "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
     
@@ -495,6 +530,7 @@ class AddCategoriesDevView(View):
         return render(request, 'developer/categoriesForm.html', {
             "form": form,
             "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -505,6 +541,7 @@ class EditCategoriesDevView(View):
         return render(request, 'developer/categoriesForm.html', {
             "form": form,
             "tag": "Edit",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
     
@@ -519,6 +556,7 @@ class EditCategoriesDevView(View):
         return render(request, 'developer/categoriesForm.html', {
             "form": form,
             "tag": "Edit",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -531,6 +569,7 @@ class TagsDevView(View):
         tags_list = paginator.get_page(page_number)
         return render(request, 'developer/tags.html', {
             "tags": tags_list,
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -548,6 +587,7 @@ class AddTagsDevView(View):
         return render(request, 'developer/tagsForm.html',{
             "form": form,
             "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
     
@@ -561,6 +601,7 @@ class AddTagsDevView(View):
         return render(request, 'developer/tagsForm.html',{
             "form": form,
             "tag": "Add",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
 
@@ -571,6 +612,7 @@ class EditTagsDevView(View):
         return render(request, 'developer/tagsForm.html',{
             "form": form,
             "tag": "Edit",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
     
@@ -585,5 +627,6 @@ class EditTagsDevView(View):
         return render(request, 'developer/tagsForm.html',{
             "form": form,
             "tag": "Edit",
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })

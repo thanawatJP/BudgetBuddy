@@ -57,10 +57,18 @@ class SavingsGoal(models.Model):
         return self.name
 
 class Notification(models.Model):
+    TRANSACTION_TYPES = [
+        ('50', '50% Budget Used'),
+        ('75', '75% Budget Used'),
+        ('100', '100% Budget Used'),
+    ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    notify_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
     message = models.TextField()
-    notification_date = models.DateField(auto_now_add=True)
-    is_sent = models.BooleanField(default=False)
+    notification_date = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    is_delete = models.BooleanField(default=False)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'Notification for {self.user}'

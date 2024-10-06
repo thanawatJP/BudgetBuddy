@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Saving{% endblock %}
 
@@ -15,23 +16,33 @@
         </ul>
     </div>
     
-    <div class="p-4">
-        <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5 w-full">
-            <div class="flex justify-between mb-6">
-                <div class="w-full">
-                    <div class="flex justify-between ">
-                        <div class="text-2xl font-semibold mb-1">เงินเต็ม Category Name</div>
-                        <div class="text-2xl mb-1">
-                            <div class="text-sm font-medium text-gray-400">09:43 A.M.</div>
+    {% for notification in notifications %}
+        <div class="pt-4 pl-4 pr-4">
+            <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5 w-full">
+                <div class="flex justify-between mb-6">
+                    <div class="w-full">
+                        <div class="flex justify-between ">
+                            <div class="text-2xl font-semibold mb-1">{{ notification.category }}: {{ notification.notify_type }}</div>
+                            <div class="flex text-2xl mb-1">
+                                <div class="text-sm font-medium text-gray-400 flex items-center">
+                                    {{ notification.notification_date|date:"M. d, Y, h:i A" }}
+                                </div>
+                                <button type="button" onclick="deleteNotification({{ notification.id }}, '{{csrf_token}}')" class="ml-5 delete flex items-center text-gray-600 hover:text-blue-500 hover:bg-gray-50">
+                                    <i class="ri-close-line"></i>
+                                </button>
+                            </div>
                         </div>
+                        <div class="text-sm font-medium text-gray-400">{{ notification.message }}</div>
                     </div>
-                    <div class="text-sm font-medium text-gray-400">เงินเกิน limit แล้วไอ้โง้</div>
                 </div>
             </div>
         </div>
-    </div>
-
+    {% endfor %}
 
 </main>
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/notificationScript.js' %}"></script>
 {% endblock %}
