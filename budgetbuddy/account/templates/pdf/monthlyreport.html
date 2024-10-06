@@ -35,9 +35,12 @@
     			<td>User: {{user}}</td>
     		</tr>
 			<tr>
-				<td>CreateAt: {{create_at}}</td>
+				<td>Summary for: {{selected_year}}, {{selected_month}}</td>
 			</tr>
-    </table>
+			<tr>
+				<td>Create at: {{create_at}}</td>
+			</tr>
+	</table>
 
     <hr>
 
@@ -51,7 +54,7 @@
 			<tr>
 				<td>{{income.category__name}}</td>
     			<td>{{income.total_income}}</td>
-    			<td>{{income.income_percent|floatformat:1 }}%</td>
+    			<td>{{income.income_percent|floatformat:2 }}%</td>
 			</tr>
 		{% endfor %}
     </table>
@@ -80,7 +83,7 @@
 			<tr>
 				<td>{{expense.category__name}}</td>
     			<td>{{expense.total_expense}}</td>
-    			<td>{{expense.expense_percent|floatformat:1 }}%</td>
+    			<td>{{expense.expense_percent|floatformat:2 }}%</td>
 			</tr>
 		{% endfor %}
     </table>
