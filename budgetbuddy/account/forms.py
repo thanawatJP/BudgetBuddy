@@ -90,9 +90,16 @@ class AccountForm(ModelForm):
         ]
     
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
         super(AccountForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        if Account.objects.filter(name=name, user=self.user).exists():
+            raise ValidationError("คุณใช้ชื่อนี้ในการสร้างบัญชีไปแล้ว")
+        return name
 
 class CategoryDevForm(ModelForm):
 

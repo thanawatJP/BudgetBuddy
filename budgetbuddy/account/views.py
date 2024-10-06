@@ -437,7 +437,7 @@ class AccountView(View):
 
 class AddAccountView(View):
     def get(self, request):
-        form = AccountForm()
+        form = AccountForm(user=request.user)
         return render(request, 'account/accountForm.html', {
             "form": form,
             "tag": "Add",
@@ -446,7 +446,7 @@ class AddAccountView(View):
             })
 
     def post(self, request):
-        form = AccountForm(request.POST)
+        form = AccountForm(request.POST, user=request.user)
         
         if form.is_valid():
             Account.objects.create(name=form.cleaned_data['name'], user=request.user)
@@ -462,7 +462,7 @@ class AddAccountView(View):
 class EditAccountView(View):
     def get(self, request, account_id):
         account = Account.objects.get(pk=account_id)
-        form = AccountForm(instance=account)
+        form = AccountForm(instance=account, user=request.user)
         return render(request, 'account/accountForm.html', {
             "form": form,
             "tag": "Edit",
@@ -472,7 +472,7 @@ class EditAccountView(View):
 
     def post(self, request, account_id):
         account = Account.objects.get(pk=account_id)
-        form = AccountForm(request.POST, instance=account)
+        form = AccountForm(request.POST, instance=account, user=request.user)
         
         if form.is_valid():
             form.save()
