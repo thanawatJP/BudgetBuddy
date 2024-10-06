@@ -17,7 +17,7 @@
     </div>
 
     <div class="py-2 px-6 w-full grid grid-cols-2">
-        <div class="bg-white rounded-md border border-dashed border-gray-200 p-4 mt-4 mb-4 mr-2 shadow-md shadow-black/5">
+        <div class="bg-white rounded-md border border-dashed border-gray-200 p-4 mt-4 mb-4 shadow-md shadow-black/5 mr-4">
             <div class="flex items-center mb-0.5">
                 {% if dailyIncome is not None %}
                     <div class="text-xl font-semibold">{{dailyIncome}}</div>
@@ -25,9 +25,9 @@
                     <div class="text-xl font-semibold">0</div>
                 {% endif %}
             </div>
-            <span class="text-sm p-1 rounded bg-emerald-500/10 text-emerald-500 font-medium text-[13px]">This day's income</span>
+            <span class="text-sm p-1 rounded bg-emerald-500/10 text-emerald-500 font-medium text-[13px] ">This day's income</span>
         </div>
-        <div class="bg-white rounded-md border border-dashed border-gray-200 p-4 mt-4 mb-4 ml-2 shadow-md shadow-black/5">
+        <div class="bg-white rounded-md border border-dashed border-gray-200 p-4 mt-4 mb-4 shadow-md shadow-black/5 mr-4">
             <div class="flex items-center mb-0.5">
                 {% if dailyExpense is not None %}
                     <div class="text-xl font-semibold">{{dailyExpense}}</div>
@@ -38,134 +38,137 @@
             <span class="text-sm p-1 rounded bg-rose-500/10 text-rose-500 font-medium text-[13px]">This day's Expense</span>
         </div>
     </div>
-
-    <div class="p-4 flex justify-end">
-        <form action="" class="flex items-center pr-4 ">
-            <div class="relative mr-4 flex">
-                <input type="text" class="py-2 pr-4 pl-4 bg-white outline-none border border-gray-400 rounded-l-md text-sm focus:border-blue-500 mr-0" placeholder="Search...">
-                <button type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-r-md text-sm px-5 py-2">
-                    <i class="ri-search-line text-md text-white"></i>
-                </button>
-            </div>
-            <input type="date" class="text-sm py-2 pl-10 pr-10 bg-white border border-gray-400 rounded-md focus:border-blue-500 outline-none appearance-none" />
-        </form>
-        <a href="{% url 'monthly-report' %}" class="pr-4">
-            <button type="button" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
-                <i class="ri-file-download-line"></i>
-                Monthly Report
-            </button>
-        </a>
-        <a href="{% url 'addTransaction' %}">
-            <button type="button" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
-                <i class="ri-pencil-line"></i>
-                Add New
-            </button>
-        </a>
-    </div>
-    
-
-    <div class="py-2 px-6 relative overflow-x-auto min-h-screen">
-        <table class="w-full text-sm text-left rtl:text-right">
-            <thead class="text-sm text-white uppercase bg-green-700">
-                <tr>
-                    <th scope="col" class="px-6 py-3">
-                        No.
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Date&Time
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Name
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Account
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Category
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Type
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Amount
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Tag
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for transaction in transactions %}
-                <tr class="bg-white border-b">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {{ forloop.counter }}
-                    </th>
-                    <td class="px-6 py-4">
-                        {{ transaction.create_at|date:"M. d, Y, h:i A" }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ transaction.description }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ transaction.account }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ transaction.category }}
-                    </td>
-                    <td class="px-6 py-4 border-b border-b-gray-50">
-                        {% if transaction.transaction_type == 'income' %}
-                            <span class="inline-block p-1 rounded bg-emerald-500/10 text-emerald-500 font-medium text-[13px] leading-none">Income</span>
-                        {% else %}
-                            <span class="inline-block p-1 rounded bg-rose-500/10 text-rose-500 font-medium text-[13px] leading-none">Expense</span>
-                        {% endif %}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ transaction.amount }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {% for tag in transaction.tags.all %}
-                            {{ tag }}
-                        {% endfor %}
-                    </td>
-                    <td class="py-2 px-4">
-                        <div class="dropdown">
-                            <button type="button" class="dropdown-toggle text-gray-600 hover:text-blue-800 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
-                            <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
-                                <li>
-                                    <a href="{% url 'editTransaction' transaction.id %}" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Update</a>
-                                </li>
-                                <li>
-                                    <button type="button" onclick="deleteTransaction({{ transaction.id }}, '{{csrf_token}}')" class="delete w-full flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</button>
-                                </li>
-                            </ul>
+    <div class="px-6">
+        <div class="p-4 bg-white rounded-md border border-dashed border-gray-200 p-4 mt-4 shadow-md shadow-black/5">
+            <div class="flex justify-between mb-4">
+                <div class="flex items-center">
+                    <form action="{% url 'monthly-report' %}" method="get">
+                        <input type="month" name="month-report" class="text-sm py-2 pl-4 pr-4 bg-white border border-gray-400 rounded-md focus:border-blue-500 outline-none appearance-none" />
+                        <button type="submit" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md ml-2">
+                            <i class="ri-file-download-line"></i>
+                            Monthly Report
+                        </button>
+                    </form>
+                </div>
+                <div class="flex items-center">   
+                    <form action="" class="flex item-center pr-4">
+                        <input type="date" class="text-sm py-2 pl-10 pr-10 bg-white border border-gray-400 rounded-md focus:border-blue-500 outline-none appearance-none mr-4" />
+                        <div class="relative flex">
+                            <input type="text" class="py-2 pr-4 pl-4 bg-white outline-none border border-gray-400 rounded-l-md text-sm focus:border-blue-500 mr-0" placeholder="Search...">
+                            <button type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-r-md text-sm px-5 py-2">
+                                <i class="ri-search-line text-md text-white"></i>
+                            </button>
                         </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <div class="pagination text-center text-gray-700 mt-4">
-            <span class="step-links">
-                {% if transactions.has_previous %}
-                    <a href="?page=1" class="hover:text-gray-500">&laquo; first</a>
-                    <a href="?page={{ transactions.previous_page_number }}" class="hover:text-gray-500">previous</a>
-                {% endif %}
-        
-                <span class="current">
-                    Page {{ transactions.number }} of {{ transactions.paginator.num_pages }}.
-                </span>
-        
-                {% if transactions.has_next %}
-                    <a href="?page={{ transactions.next_page_number }}" class="hover:text-gray-500">next</a>
-                    <a href="?page={{ transactions.paginator.num_pages }}" class="hover:text-gray-500">last &raquo;</a>
-                {% endif %}
-            </span>
+                    </form>
+                    <a href="{% url 'addTransaction' %}">
+                        <button type="button" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
+                            <i class="ri-pencil-line"></i>
+                            Add New
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="py-2 px-6 relative overflow-x-auto min-h-screen">
+                <table class="w-full text-sm text-left rtl:text-right">
+                    <thead class="text-sm text-white uppercase bg-green-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                No.
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Date&Time
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Description
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Account
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Category
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Type
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Amount
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Tag
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr class="bg-white border-b">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{ forloop.counter }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ transaction.create_at|date:"M. d, Y, h:i A" }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ transaction.description|truncatechars:20 }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ transaction.account }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ transaction.category }}
+                            </td>
+                            <td class="px-6 py-4 border-b border-b-gray-50">
+                                {% if transaction.transaction_type == 'income' %}
+                                    <span class="inline-block p-1 rounded bg-emerald-500/10 text-emerald-500 font-medium text-[13px] leading-none">Income</span>
+                                {% else %}
+                                    <span class="inline-block p-1 rounded bg-rose-500/10 text-rose-500 font-medium text-[13px] leading-none">Expense</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ transaction.amount }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ transaction.tags.all|join:", "|truncatechars:20 }}
+                            </td>
+                            <td class="py-2 px-4">
+                                <div class="dropdown">
+                                    <button type="button" class="dropdown-toggle text-gray-600 hover:text-blue-800 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
+                                    <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
+                                        <li>
+                                            <a href="{% url 'editTransaction' transaction.id %}" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Update</a>
+                                        </li>
+                                        <li>
+                                            <button type="button" onclick="deleteTransaction({{ transaction.id }}, '{{csrf_token}}')" class="delete w-full flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="pagination text-center text-gray-700 mt-4">
+                    <span class="step-links">
+                        {% if transactions.has_previous %}
+                            <a href="?page=1" class="hover:text-gray-500">&laquo; first</a>
+                            <a href="?page={{ transactions.previous_page_number }}" class="hover:text-gray-500">previous</a>
+                        {% endif %}
+                
+                        <span class="current">
+                            Page {{ transactions.number }} of {{ transactions.paginator.num_pages }}.
+                        </span>
+                
+                        {% if transactions.has_next %}
+                            <a href="?page={{ transactions.next_page_number }}" class="hover:text-gray-500">next</a>
+                            <a href="?page={{ transactions.paginator.num_pages }}" class="hover:text-gray-500">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
-
 </main>
 
 {% endblock %}

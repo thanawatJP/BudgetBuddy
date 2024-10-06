@@ -18,7 +18,7 @@ from xhtml2pdf import pisa
 class ViewPDF(View):
     def render_to_pdf(self, template_src, context_dict={}):
         template = get_template(template_src)
-        html  = template.render(context_dict)
+        html = template.render(context_dict)
         result = BytesIO()
         pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
         if not pdf.err:
@@ -29,30 +29,47 @@ class ViewPDF(View):
         user_pk = request.user.pk
         user_accounts = request.user.account_set.all()
         user = User.objects.get(pk=user_pk)
-        
-        now = timezone.now()
-        
+        month_report = request.GET.get('month-report')
+    
+        if month_report:
+            # แยก year และ month ออกจากค่า month-report
+            year, month = map(int, month_report.split('-'))
+        else:
+            # ถ้าไม่มีค่า month-report ใช้ค่า year และ month ปัจจุบัน
+            year = timezone.now().year
+            month = timezone.now().month
+
+        # แปลงปีและเดือนให้เป็น integer
+        year = int(year)
+        month = int(month)
+
+        if month < 1 or month > 12:
+            return HttpResponse("Invalid month", status=400)
+
+        # คำนวณยอดรวมรายรับของเดือนที่เลือก
         total_income_current = Transaction.objects.filter(
             account__in=user_accounts,
-            create_at__year=now.year,
-            create_at__month=now.month,
+            create_at__year=year,
+            create_at__month=month,
             transaction_type='income'
         ).aggregate(sum_income=Sum('amount'))['sum_income'] or 0
         
+        # คำนวณยอดรวมรายจ่ายของเดือนที่เลือก
         total_expense_current = Transaction.objects.filter(
             account__in=user_accounts,
-            create_at__year=now.year,
-            create_at__month=now.month,
+            create_at__year=year,
+            create_at__month=month,
             transaction_type='expense'
         ).aggregate(sum_expense=Sum('amount'))['sum_expense'] or 0
-        
+
         this_month_income = []
         
-        if  total_income_current > 0:
+        # ถ้ามีรายรับ คำนวณรายรับต่อหมวดหมู่
+        if total_income_current > 0:
             this_month_income = Transaction.objects.filter(
                 account__in=user_accounts,
-                create_at__year=now.year,
-                create_at__month=now.month,
+                create_at__year=year,
+                create_at__month=month,
                 transaction_type='income'
             ).values('category__name').annotate(
                 total_income=Sum('amount')
@@ -62,11 +79,12 @@ class ViewPDF(View):
 
         this_month_expense = []
         
+        # ถ้ามีรายจ่าย คำนวณรายจ่ายต่อหมวดหมู่
         if total_expense_current > 0:
             this_month_expense = Transaction.objects.filter(
                 account__in=user_accounts,
-                create_at__year=now.year,
-                create_at__month=now.month,
+                create_at__year=year,
+                create_at__month=month,
                 transaction_type='expense'
             ).values('category__name').annotate(
                 total_expense=Sum('amount')
@@ -76,12 +94,16 @@ class ViewPDF(View):
 
         context = {
             'user': user,
-            'create_at': now,
+            'create_at': timezone.now(),  # ใช้เวลาปัจจุบันสำหรับการสร้าง PDF
             'this_month_income': this_month_income,
             'this_month_expense': this_month_expense,
             'total_income_current': total_income_current,
-            'total_expense_current': total_expense_current
+            'total_expense_current': total_expense_current,
+            'selected_year': year,
+            'selected_month': month,
         }
+        
+        # สร้าง PDF
         pdf = self.render_to_pdf('pdf/monthlyreport.html', context)
         return HttpResponse(pdf, content_type='application/pdf')
 
