@@ -49,9 +49,11 @@
                             <div class="flex justify-between">
                                 <div class="text-2xl font-semibold mb-1">{{ saving.name }}</div>
                                 <div class="flex">
-                                    <button type="button" class="dropdown-toggle text-gray-600 hover:text-blue-800 text-md w-6 h-6 rounded flex items-center justify-center bg-gray-50 mr-3">
-                                        <i class="ri-add-line"></i>
-                                    </button>
+                                    <a href='{% url 'addTransaction' %}?description=Saving to {{ saving.name }}&category=SavingGoals&transaction_type=expense'>
+                                        <button type="button" class="dropdown-toggle text-gray-600 hover:text-blue-800 text-md w-6 h-6 rounded flex items-center justify-center bg-gray-50 mr-3">
+                                            <i class="ri-add-line"></i>
+                                        </button>
+                                    </a>
                                     <div class="dropdown">
                                         <button type="button" class="dropdown-toggle text-gray-600 hover:text-blue-800 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
                                         <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
@@ -65,12 +67,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-sm font-medium text-gray-400">Target Date: {{ saving.target_date|date:"M. d, Y" }}</div>
+                            <div class="flex justify-between">
+                                <div class="text-sm font-medium text-gray-400">Target Date: {{ saving.target_date|date:"M. d, Y" }}</div>
+                                <div class="text-sm font-medium text-gray-400">{{ saving.current_amount }}/{{ saving.target_amount }}</div>
+                            </div>
                         </div>
                     </div>
                     <div class="flex items-center">
                         <div class="w-full bg-gray-100 rounded-full h-4">
-                            <div class="h-full bg-blue-500 rounded-full p-1" style="width: {{ saving.percent }}%;">
+                            <div class="h-full bg-blue-500 rounded-full p-1" style="width: {% if saving.percent <= 100 %}{{ saving.percent }}{% else %}100{% endif %}%;">
                                 <div class="w-2 h-2 rounded-full bg-white ml-auto"></div>
                             </div>
                         </div>

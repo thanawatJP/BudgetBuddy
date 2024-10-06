@@ -33,7 +33,7 @@ class Transaction(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     description = models.CharField(max_length=255)
     transaction_type = models.CharField(max_length=7, choices=TRANSACTION_TYPES)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True, null=True)
 
     def __str__(self):
         return f'{self.transaction_type.capitalize()} - {self.amount}'
@@ -58,9 +58,10 @@ class SavingsGoal(models.Model):
 
 class Notification(models.Model):
     TRANSACTION_TYPES = [
-        ('50', '50% Budget Used'),
-        ('75', '75% Budget Used'),
-        ('100', '100% Budget Used'),
+        ('50b', '50% Budget Used'),
+        ('75b', '75% Budget Used'),
+        ('100b', '100% Budget Used'),
+        ('100s', '100% Saving Goal')
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     notify_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)

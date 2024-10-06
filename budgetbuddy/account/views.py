@@ -238,8 +238,8 @@ class TransactionView(View):
         paginator = Paginator(transactions, 10)
         page_number = request.GET.get('page')
         transactions_list = paginator.get_page(page_number)
-        income = Transaction.objects.filter(create_at__day=datetime.now().day, transaction_type="income").aggregate(daily=Sum("amount"))
-        expense = Transaction.objects.filter(create_at__day=datetime.now().day, transaction_type="expense").aggregate(daily=Sum("amount"))
+        income = Transaction.objects.filter(account__in = accounts, create_at__day=datetime.now().day, transaction_type="income").aggregate(daily=Sum("amount"))
+        expense = Transaction.objects.filter(account__in = accounts, create_at__day=datetime.now().day, transaction_type="expense").aggregate(daily=Sum("amount"))
         return render(request, 'transaction/transactions.html', {
             "transactions": transactions_list,
             "dailyIncome": income['daily'],
@@ -251,6 +251,10 @@ class TransactionView(View):
     def delete(self, request, transaction_id):
         try:
             transaction = Transaction.objects.get(pk=transaction_id)
+            if (transaction.description.startswith("Saving to ")) and (transaction.transaction_type=="expense") and (transaction.category.name=="SavingGoals"):
+                saving = SavingsGoal.objects.get(user=request.user, name=transaction.description.split(" ")[-1])
+                saving.current_amount -= transaction.amount
+                saving.save()
             transaction.delete()
             return JsonResponse({"status": 200})
         except:
@@ -258,7 +262,12 @@ class TransactionView(View):
 
 class AddTransactionView(View):
     def get(self, request):
-        form = TransactionForm(user=request.user)
+        initial_data = {
+            'description': request.GET.get('description', ''),
+            'transaction_type': request.GET.get('transaction_type', ''),
+            'category': request.GET.get('category', '')
+        }
+        form = TransactionForm(user=request.user, initial=initial_data)
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Add",
@@ -267,14 +276,24 @@ class AddTransactionView(View):
             })
     
     def post(self, request):
-        form = TransactionForm(request.POST, user=request.user)
+        initial_data = {
+            'description': request.GET.get('description', ''),
+            'transaction_type': request.GET.get('transaction_type', ''),
+            'category': request.GET.get('category', '')
+        }
+        form = TransactionForm(request.POST, user=request.user, initial=initial_data)
         if form.is_valid():
             transaction = form.save()
-
-            notification = Notify(transaction=transaction, user=request.user)
+            if transaction.description.startswith("Saving to") and transaction.category.name == "SavingGoals":
+                name = transaction.description.replace("Saving to ", "")
+                saving = SavingsGoal.objects.get(name=name, user=request.user)
+                saving.current_amount += transaction.amount
+                saving.save()
+                notification = Notify(transaction=transaction, saving=saving, user=request.user)
+            else:
+                notification = Notify(transaction=transaction, user=request.user)
             notification.execute()
             return redirect("/account/transaction/")
-
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Add",
@@ -285,7 +304,12 @@ class AddTransactionView(View):
 class EditTransactionView(View):
     def get(self, request, transaction_id):
         transaction = Transaction.objects.get(pk=transaction_id)
-        form = TransactionForm(instance=transaction, user=request.user)
+        initial_data = {
+            'description': transaction.description,
+            'transaction_type': transaction.transaction_type,
+            'category': transaction.category
+        }
+        form = TransactionForm(instance=transaction, user=request.user, initial=initial_data)
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Edit",
@@ -295,9 +319,25 @@ class EditTransactionView(View):
     
     def post(self, request, transaction_id):
         transaction = Transaction.objects.get(pk=transaction_id)
-        form = TransactionForm(request.POST, instance=transaction, user=request.user)
+        old_amount = transaction.amount
+        initial_data = {
+            'description': transaction.description,
+            'transaction_type': transaction.transaction_type,
+            'category': transaction.category
+        }
+        form = TransactionForm(request.POST, instance=transaction, user=request.user, initial=initial_data)
         if form.is_valid():
-            form.save()
+            updateTransaction = form.save()
+            if updateTransaction.description.startswith("Saving to") and updateTransaction.category.name == "SavingGoals":
+                name = updateTransaction.description.replace("Saving to ", "")
+                saving = SavingsGoal.objects.get(name=name, user=request.user)
+                saving.current_amount -= old_amount
+                saving.current_amount += updateTransaction.amount
+                saving.save()
+                notification = Notify(transaction=transaction, saving=saving, user=request.user)
+            else:
+                notification = Notify(transaction=transaction, user=request.user)
+            notification.execute()
             return redirect("/account/transaction/")
 
         return render(request, 'transaction/transactionForm.html', {
@@ -547,6 +587,8 @@ class NotifyView(View):
         Notification.objects.filter(user=request.user).update(is_read=True)
     
         notifications = Notification.objects.filter(user=request.user, is_delete=False).order_by('-notification_date')
+        for notification in notifications:
+            notification.name = (notification.message.split(" "))[1]
         return render(request, 'notify.html', {
             "notifications": notifications,
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),

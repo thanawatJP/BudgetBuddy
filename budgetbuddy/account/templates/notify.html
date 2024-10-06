@@ -22,7 +22,11 @@
                 <div class="flex justify-between mb-6">
                     <div class="w-full">
                         <div class="flex justify-between ">
+                            {% if notification.category.name == "SavingGoals" %}
+                                <div class="text-2xl font-semibold mb-1">{{ notification.name }}: {{ notification.notify_type }}</div>
+                            {% else %}
                             <div class="text-2xl font-semibold mb-1">{{ notification.category }}: {{ notification.notify_type }}</div>
+                            {% endif %}
                             <div class="flex text-2xl mb-1">
                                 <div class="text-sm font-medium text-gray-400 flex items-center">
                                     {{ notification.notification_date|date:"M. d, Y, h:i A" }}

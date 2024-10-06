@@ -23,6 +23,30 @@ class TransactionForm(ModelForm):
         self.user = kwargs.pop('user', None)
         super(TransactionForm, self).__init__(*args, **kwargs)
         # Filter the account field to only show accounts for the current user
+
+        request = kwargs.get('initial', {})
+        if self.instance.pk is not None:
+            description = self.instance.description
+            transaction_type = self.instance.transaction_type
+            category = self.instance.category
+
+            # หากตรงตามเงื่อนไขให้ล็อคฟิลด์
+            if description.startswith("Saving to") and transaction_type == "expense" and category == Category.objects.get(name=category):
+                self.fields['description'].disabled = True
+                self.fields['transaction_type'].disabled = True
+                self.fields['category'].disabled = True
+
+        elif request['description']!='' and request['transaction_type']!='' and request['category']!='':
+            self.initial['description'] = request.get('description', '')
+            self.initial['transaction_type'] = request.get('transaction_type', '')
+            category = Category.objects.get(name=request.get('category', ''))
+            self.initial['category'] = category
+
+            # ล็อค fields
+            self.fields['description'].disabled = True
+            self.fields['transaction_type'].disabled = True
+            self.fields['category'].disabled = True
+
         self.fields['account'].queryset = Account.objects.filter(user=self.user)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'w-full border border-gray-600 rounded'
