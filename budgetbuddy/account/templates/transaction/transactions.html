@@ -50,16 +50,21 @@
                         </button>
                     </form>
                 </div>
-                <div class="flex items-center">   
-                    <form action="" class="flex item-center pr-4">
-                        <input type="date" class="text-sm py-2 pl-10 pr-10 bg-white border border-gray-400 rounded-md focus:border-blue-500 outline-none appearance-none mr-4" />
+                <div class="flex items-center">
+                    <form action="" class="flex item-center pr-4" id="search-form">
+                        <input type="date" name="searchdate" class="text-sm py-2 pl-10 pr-10 bg-white border border-gray-400 rounded-md focus:border-blue-500 outline-none appearance-none mr-4" onchange="document.getElementById('search-form').submit()" value="{{ request.GET.searchdate }}">
                         <div class="relative flex">
-                            <input type="text" class="py-2 pr-4 pl-4 bg-white outline-none border border-gray-400 rounded-l-md text-sm focus:border-blue-500 mr-0" placeholder="Search...">
+                            <input type="text" name="search" class="py-2 pr-4 pl-4 bg-white outline-none border border-gray-400 rounded-l-md text-sm focus:border-blue-500 mr-0" placeholder="Search..." value="{{ request.GET.search }}">
                             <button type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-r-md text-sm px-5 py-2">
                                 <i class="ri-search-line text-md text-white"></i>
                             </button>
                         </div>
                     </form>
+                    <a href="{% url 'transaction' %}" class="mr-4">
+                        <button type="button" class="py-2 px-4 text-white bg-rose-700 hover:bg-rose-600 hover:text-gray-300 rounded-md">
+                            <i class="ri-refresh-line text-md text-white"></i>
+                        </button>
+                    </a>   
                     <a href="{% url 'addTransaction' %}">
                         <button type="button" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
                             <i class="ri-pencil-line"></i>
@@ -70,37 +75,78 @@
             </div>
             <div class="py-2 px-6 relative overflow-x-auto min-h-screen">
                 <table class="w-full text-sm text-left rtl:text-right">
-                    <thead class="text-sm text-white uppercase bg-green-700">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">
-                                No.
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Date&Time
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Description
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Account
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Category
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Type
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Amount
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Tag
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                
-                            </th>
-                        </tr>
-                    </thead>
+                    <form action="" method="get" id="transaction-form">
+                        <thead class="text-sm text-white uppercase bg-green-700 item-center justify-center">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">
+                                    No.
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Date&Time
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Description
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    <select name="account" id="select-account" class="bg-green-700 text-sm " onchange="document.getElementById('transaction-form').submit()">
+                                        <option value="" class="bg-gray-600">ACCOUNT</option>
+                                        {% for account in user_accounts %}
+                                            {% if account.id|stringformat:"s" == selected_account_id %}
+                                                <option value="{{ account.id }}" selected>{{ account.name|upper }}</option>
+                                            {% else %}
+                                                <option value="{{ account.id }}">{{ account.name|upper }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    <select name="category" id="select-category" class="bg-green-700 text-sm" onchange="document.getElementById('transaction-form').submit()">
+                                        <option value="">CATEGORY</option>
+                                        {% for category in categories %}
+                                            {% if category.id|stringformat:"s" == selected_category_id %}
+                                                <option value="{{ category.id }}" selected>{{ category.name|upper }}</option>
+                                            {% else %}
+                                                <option value="{{ category.id }}">{{ category.name|upper }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    <select name="transactiontype" id="select-type" class="bg-green-700 text-sm" onchange="document.getElementById('transaction-form').submit()">
+                                        <option value="">TYPE</option>
+                                        {% if selected_transaction_type == "income" %}
+                                            <option value="income" selected>INCOME</option>
+                                            <option value="expense">EXPENSE</option>
+                                        {% elif selected_transaction_type == "expense" %}
+                                            <option value="income">INCOME</option>
+                                            <option value="expense" selected>EXPENSE</option>
+                                        {% else %}
+                                            <option value="income">INCOME</option>
+                                            <option value="expense">EXPENSE</option>
+                                        {% endif %}
+                                    </select>
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Amount
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    <select name="tag" id="select-tag" class="bg-green-700 text-sm" onchange="document.getElementById('transaction-form').submit()">
+                                        <option value="">TAG</option>
+                                        {% for tag in tags %}
+                                            {% if tag.id|stringformat:"s" == selected_tag_id %}
+                                                <option value="{{ tag.id }}" selected>{{ tag.name|upper }}</option>
+                                            {% else %}
+                                                <option value="{{ tag.id }}">{{ tag.name|upper }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    
+                                </th>
+                            </tr>
+                        </thead>
+                    </form>
                     <tbody>
                         {% for transaction in transactions %}
                         <tr class="bg-white border-b">

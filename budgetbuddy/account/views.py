@@ -236,7 +236,35 @@ class HomeView(View):
 class TransactionView(View):
     def get(self, request):
         accounts = Account.objects.filter(user=request.user)
+        categories = Category.objects.all()
+        tags = Tag.objects.all()
+        
+        search_description = request.GET.get('search', '')
+        search_date = request.GET.get('searchdate')
+        selected_category_id = request.GET.get('category')
+        selected_account_id = request.GET.get('account')
+        selected_transaction_type = request.GET.get('transactiontype')
+        selected_tag_id = request.GET.get('tag')
+        
         transactions = Transaction.objects.filter(account__in=accounts).order_by('-create_at')
+        
+        if search_description:
+            transactions = transactions.filter(
+                Q(description__icontains=search_description) |
+                Q(category__name__icontains=search_description) |
+                Q(tags__name__icontains=search_description)
+            )
+        if search_date:
+            transactions = transactions.filter(create_at__date=search_date)
+        if selected_category_id:
+            transactions = transactions.filter(category_id=selected_category_id)
+        if selected_tag_id:
+            transactions = transactions.filter(tags=selected_tag_id)
+        if selected_account_id:
+            transactions = transactions.filter(account_id=selected_account_id)
+        if selected_transaction_type:
+            transactions = transactions.filter(transaction_type=selected_transaction_type)
+    
         paginator = Paginator(transactions, 10)
         page_number = request.GET.get('page')
         transactions_list = paginator.get_page(page_number)
@@ -247,7 +275,14 @@ class TransactionView(View):
             "dailyIncome": income['daily'],
             "dailyExpense": expense['daily'],
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
-            "path": request.path
+            "path": request.path,
+            "user_accounts": accounts,
+            "categories": categories,
+            "tags": tags,
+            "selected_category_id": selected_category_id,
+            "selected_account_id": selected_account_id,
+            "selected_transaction_type": selected_transaction_type,
+            "selected_tag_id": selected_tag_id
         })
     
     def delete(self, request, transaction_id):
