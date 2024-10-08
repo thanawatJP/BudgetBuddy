@@ -10,10 +10,11 @@ from django.db.models.functions import TruncMonth
 from datetime import datetime, timedelta
 from django.utils import timezone
 from .notifications import Notify
-
+from django.contrib import messages
 from io import BytesIO
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+from django.contrib.auth import login
 
 #Opens up page as PDF
 class ViewPDF(View):
@@ -170,6 +171,7 @@ class HomeView(View):
             .order_by('month')
         )
         graph_total_income = self.ensure_six_elements([float(income['total_income']) for income in six_month_income])
+        print(six_month_income)
         # Query รายจ่ายในแต่ละเดือน
         six_month_expense = (
             Transaction.objects
@@ -240,7 +242,35 @@ class HomeView(View):
 class TransactionView(View):
     def get(self, request):
         accounts = Account.objects.filter(user=request.user)
+        categories = Category.objects.all()
+        tags = Tag.objects.all()
+        
+        search_description = request.GET.get('search', '')
+        search_date = request.GET.get('searchdate')
+        selected_category_id = request.GET.get('category')
+        selected_account_id = request.GET.get('account')
+        selected_transaction_type = request.GET.get('transactiontype')
+        selected_tag_id = request.GET.get('tag')
+        
         transactions = Transaction.objects.filter(account__in=accounts).order_by('-create_at')
+        
+        if search_description:
+            transactions = transactions.filter(
+                Q(description__icontains=search_description) |
+                Q(category__name__icontains=search_description) |
+                Q(tags__name__icontains=search_description)
+            )
+        if search_date:
+            transactions = transactions.filter(create_at__date=search_date)
+        if selected_category_id:
+            transactions = transactions.filter(category_id=selected_category_id)
+        if selected_tag_id:
+            transactions = transactions.filter(tags=selected_tag_id)
+        if selected_account_id:
+            transactions = transactions.filter(account_id=selected_account_id)
+        if selected_transaction_type:
+            transactions = transactions.filter(transaction_type=selected_transaction_type)
+    
         paginator = Paginator(transactions, 10)
         page_number = request.GET.get('page')
         transactions_list = paginator.get_page(page_number)
@@ -251,7 +281,14 @@ class TransactionView(View):
             "dailyIncome": income['daily'],
             "dailyExpense": expense['daily'],
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
-            "path": request.path
+            "path": request.path,
+            "user_accounts": accounts,
+            "categories": categories,
+            "tags": tags,
+            "selected_category_id": selected_category_id,
+            "selected_account_id": selected_account_id,
+            "selected_transaction_type": selected_transaction_type,
+            "selected_tag_id": selected_tag_id
         })
     
     def delete(self, request, transaction_id):
@@ -754,3 +791,56 @@ class EditTagsDevView(View):
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             "path": request.path
             })
+
+class EditProfileView(View):
+    def get(self, request):
+        user = request.user
+        form = EditProfileForm()
+        context = {
+            'path': request.path,
+            'user': user,
+            'form': form
+        }
+        return render(request, 'setting/editprofile.html', context)
+
+    def post(self, request):
+        user = request.user
+        form = EditProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('edit-profile')
+        context = {
+            'path': request.path,
+            'user': user,
+            'form': form
+        }
+        return render(request, 'setting/editprofile.html', context)
+
+class ResetPassWordView(View):
+    def get(self, request):
+        user = request.user
+        form = ResetPasswordForm()
+        context = {
+            'path': request.path,
+            'form': form,
+            'user': user
+        }
+        return render(request, 'setting/resetpassword.html', context)
+    
+    def post(self, request):
+        user = request.user
+        form = ResetPasswordForm(request.POST, instance=user)
+        if form.is_valid():
+            new_password = form.cleaned_data['new_password']
+            request.user.set_password(new_password)
+            request.user.save()
+            login(request, request.user)
+            messages.success(request, "Reset password successfully!")
+            return redirect('edit-profile')
+        context = {
+                'path': request.path,
+                'user': user,
+                'form': form
+            }
+        return render(request, 'setting/resetpassword.html', context)

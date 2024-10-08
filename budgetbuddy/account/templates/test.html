@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <title>home</title>
+    <title>Home</title>
 </head>
 <body class="text-gray-800 font-inter">
     
@@ -105,9 +105,9 @@
                             <option value="all">All</option>
                             {% for account in user_accounts %}
                                 {% if account.id|stringformat:"s" == selected_account_id %}
-                                    <option value="{{ account.id }}" selected>{{ account.name }}</option>
+                                    <option value="{{ account.id }}" selected>{{ account.name|upper }}</option>
                                 {% else %}
-                                    <option value="{{ account.id }}">{{ account.name }}</option>
+                                    <option value="{{ account.id }}">{{ account.name|upper }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>

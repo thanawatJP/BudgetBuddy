@@ -13,3 +13,4 @@ function deleteTransaction(transaction_id, csrf_token) {
     })
     .catch((error) => console.error("Error:", error));
 }
+
