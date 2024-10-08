@@ -108,6 +108,12 @@ class ViewPDF(View):
         pdf = self.render_to_pdf('pdf/monthlyreport.html', context)
         return HttpResponse(pdf, content_type='application/pdf')
 
+class IndexView(View):
+    def get(self, request):
+        return render(request, 'index.html', {
+            'path': request.path
+        })
+
 class HomeView(View):
     def ensure_six_elements(self, data_list):
         # ตรวจสอบว่า list มีสมาชิกครบ 6 ตัวมั้ย
