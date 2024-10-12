@@ -715,7 +715,7 @@ class EditProfileView(LoginRequiredMixin, View):
     login_url = "/authen/"
     def get(self, request):
         user = request.user
-        profile_picture, created = ProfilePicture.objects.get_or_create(user=user)
+        profile_picture = ProfilePicture.objects.get(user=user)
         print(profile_picture.image)
         form = EditProfileForm()
         form = EditProfileForm()
@@ -752,12 +752,14 @@ class ResetPassWordView(LoginRequiredMixin, View):
     login_url = "/authen/"
     def get(self, request):
         user = request.user
+        profile_picture = ProfilePicture.objects.get(user=user)
         form = ResetPasswordForm()
         context = {
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             'path': request.path,
             'form': form,
-            'user': user
+            'user': user,
+            'profile_image': profile_picture.image if profile_picture else None
         }
         return render(request, 'setting/resetpassword.html', context)
     
