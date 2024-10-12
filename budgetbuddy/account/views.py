@@ -18,6 +18,7 @@ from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from authen.models import ProfilePicture
 
 #Opens up page as PDF
 class ViewPDF(LoginRequiredMixin, View):
@@ -132,7 +133,9 @@ class HomeView(LoginRequiredMixin, View):
         user_pk = request.user.pk
         user_accounts = request.user.account_set.all()
         user = User.objects.get(pk=user_pk)
+        profile_picture, created = ProfilePicture.objects.get_or_create(user=user)
         selected_account_id = request.GET.get('account', 'all')
+        search_description = request.GET.get('search', '')
         
         #check get account id กัน user ดูข้อมูลคนอื่น
         user_account_ids = [key.id for key in user_accounts]
@@ -153,12 +156,17 @@ class HomeView(LoginRequiredMixin, View):
         total_budget = user_budget['count_budget'] or 0
         
         # query transaction ของ user นี้ตาม selected account
-        if selected_account_id == 'all':
-            user_transactions = Transaction.objects.filter(account__in=user_accounts).order_by('-create_at', '-transaction_type')
-        elif selected_account_id:
+        user_transactions = Transaction.objects.filter(account__in=user_accounts).order_by('-create_at', '-transaction_type')
+        
+        if selected_account_id and selected_account_id != 'all':
             user_transactions = Transaction.objects.filter(account_id=selected_account_id).order_by('-create_at', '-transaction_type')
-        else:
-            user_transactions = Transaction.objects.filter(account__in=user_accounts).order_by('-create_at', '-transaction_type')
+        if search_description:
+            user_transactions = user_transactions.filter(
+                Q(description__icontains=search_description) |
+                Q(category__name__icontains=search_description) |
+                Q(tags__name__icontains=search_description)
+            )
+            
         paginator = Paginator(user_transactions, 6)
         page_number = request.GET.get('page')
         transactions_list = paginator.get_page(page_number)
@@ -240,7 +248,8 @@ class HomeView(LoginRequiredMixin, View):
             'current_month_expense_sum': current_month_expense_sum,
             'selected_account_id': selected_account_id,
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
-            'path': request.path
+            'path': request.path,
+            'profile_image': profile_picture.image if profile_picture else None
         }
         return render(request, 'home.html', context)
 
@@ -706,20 +715,27 @@ class EditProfileView(LoginRequiredMixin, View):
     login_url = "/authen/"
     def get(self, request):
         user = request.user
+        profile_picture, created = ProfilePicture.objects.get_or_create(user=user)
+        print(profile_picture.image)
+        form = EditProfileForm()
         form = EditProfileForm()
         context = {
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             'path': request.path,
             'user': user,
-            'form': form
+            'form': form,
+            'profile_image': profile_picture.image if profile_picture else None
         }
         return render(request, 'setting/editprofile.html', context)
 
     def post(self, request):
         user = request.user
+        profile_picture, created = ProfilePicture.objects.get_or_create(user=user)
         form = EditProfileForm(request.POST, instance=user)
         if form.is_valid():
-            
+            if 'profile_image' in request.FILES:
+                profile_picture.image = request.FILES['profile_image']
+                profile_picture.save()
             form.save()
             messages.success(request, "Profile updated successfully!")
             return redirect('edit-profile')
@@ -727,7 +743,8 @@ class EditProfileView(LoginRequiredMixin, View):
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             'path': request.path,
             'user': user,
-            'form': form
+            'form': form,
+            'profile_image': profile_picture.image if profile_picture else None
         }
         return render(request, 'setting/editprofile.html', context)
 

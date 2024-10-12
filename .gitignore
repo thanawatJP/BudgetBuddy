@@ -3,3 +3,4 @@ node_modules/
 *.pyc
 budgetbuddy/*/__pycache__/
 budgetbuddy/*/migrations/__pycache__/
+budgetbuddy/media/profile_pictures/

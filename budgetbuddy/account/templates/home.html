@@ -21,8 +21,14 @@
     <!-- end: ez-nav -->
 
     <!-- start: welcome user -->
-    <div class="flex items-center p-6">
-      <img src="https://st3.depositphotos.com/15648834/17930/v/450/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="" class="w-16 rounded-full" />
+    <div class="flex items-center p-6 ">
+      <div class="w-16 rounded-full">
+        {% if profile_image %}
+            <img src="../../../media/{{profile_image}}" alt="Profile Image" class="rounded-full">
+        {% else %}
+            <img src="https://st3.depositphotos.com/15648834/17930/v/450/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="Default Profile Image" class="rounded-full">
+        {% endif %}
+      </div>
       <div class="">
         <h1 class="pl-6 text-xl text-green-700">Hello, {{ user }}</h1>
         <p class="pl-6 text-right text-gray-400">Welcome to the budgetbuddy</p>
@@ -81,12 +87,12 @@
           <div class="flex justify-between mb-4 items-start">
             <div class="font-medium">Income&Expense</div>
           </div>
-          <form action="" class="flex items-center mb-4">
+          <form action="" class="flex items-center mb-4" id="search-form" method="get">
             <div class="relative w-full mr-2">
-              <input type="text" class="py-2 pr-4 pl-10 bg-gray-50 w-full outline-none border border-gray-100 rounded-md text-sm focus:border-blue-500" placeholder="Search..." />
+              <input name="search" type="text" class="py-2 pr-4 pl-10 bg-gray-50 w-full outline-none border border-gray-100 rounded-md text-sm focus:border-blue-500" placeholder="Search..." onkeydown="if (event.key === 'Enter') { this.form.submit(); }" value="{{ request.GET.search }}"/>
               <i class="ri-search-line absolute top-1/2 left-4 -translate-y-1/2 text-gray-400"></i>
             </div>
-            <select name="account" id="accountSelect" class="text-sm py-2 pl-4 pr-10 bg-gray-50 border border-gray-100 rounded-tl-md rounded-bl-md focus:border-blue-500 outline-none appearance-none bg-select-arrow bg-no-repeat bg-[length:16px_16px] bg-[right_16px_center] h-[42px]">
+            <select name="account" id="accountSelect" class="text-sm py-2 pl-4 pr-10 bg-gray-50 border border-gray-100 rounded-md focus:border-blue-500 outline-none appearance-none bg-select-arrow bg-no-repeat bg-[length:16px_16px] bg-[right_16px_center] h-[42px]" onchange="document.getElementById('search-form').submit()">
               <option value="all">All</option>
               {% for account in user_accounts %}
                 {% if account.id|stringformat:'s' == selected_account_id %}
@@ -96,13 +102,13 @@
                 {% endif %}
               {% endfor %}
             </select>
-            <button type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-tr-md rounded-br-md text-sm px-5 py-2.5 h-[42px] dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><i class="ri-search-line text-md text-white"></i></button>
           </form>
           <div class="overflow-x-auto mb-4">
             <table class="w-full min-w-[540px]">
               <thead>
                 <tr>
                   <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left rounded-tl-md rounded-bl-md">create at</th>
+                  <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">Description</th>
                   <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">account</th>
                   <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">category</th>
                   <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">amount</th>
@@ -115,6 +121,9 @@
                   <tr>
                     <td class="py-2 px-4 border-b border-b-gray-50">
                       <span class="text-[13px] font-medium text-gray-400">{{ transaction.create_at }}</span>
+                    </td>
+                    <td class="py-2 px-4 border-b border-b-gray-50">
+                      <span class="text-[13px] font-medium text-gray-400">{{ transaction.description|truncatechars:20 }}</span>
                     </td>
                     <td class="py-2 px-4 border-b border-b-gray-50">
                       <span class="text-[13px] font-medium text-gray-400">{{ transaction.account }}</span>

@@ -4,6 +4,7 @@ from .models import Budget, SavingsGoal, Account, Category, Tag, Transaction
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from datetime import date
+from authen.models import ProfilePicture
 
 class ResetPasswordForm(ModelForm):
     old_password = forms.CharField(widget=forms.PasswordInput)
@@ -33,6 +34,8 @@ class ResetPasswordForm(ModelForm):
             raise forms.ValidationError("Wrong password")
     
 class EditProfileForm(ModelForm):
+    profile_image = forms.ImageField(required=False)
+    
     class Meta:
         model = User
         fields = [
