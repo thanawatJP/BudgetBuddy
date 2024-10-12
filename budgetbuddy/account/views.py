@@ -17,7 +17,7 @@ from xhtml2pdf import pisa
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db import transaction
-
+from django.core.exceptions import ObjectDoesNotExist
 
 #Opens up page as PDF
 class ViewPDF(LoginRequiredMixin, View):
@@ -334,17 +334,35 @@ class AddTransactionView(LoginRequiredMixin, View):
         }
         form = TransactionForm(request.POST, user=request.user, initial=initial_data)
         if form.is_valid():
-            transaction = form.save()
-            if transaction.description.startswith("Saving to") and transaction.category.name == "SavingGoals":
-                name = transaction.description.replace("Saving to ", "")
-                saving = SavingsGoal.objects.get(name=name, user=request.user)
-                saving.current_amount += transaction.amount
-                saving.save()
-                notification = Notify(transaction=transaction, saving=saving, user=request.user)
-            else:
-                notification = Notify(transaction=transaction, user=request.user)
-            notification.execute()
-            return redirect("/account/transaction/")
+            try:
+                with transaction.atomic():
+                    newTransaction = form.save()
+                    if newTransaction.description.startswith("Saving to") and newTransaction.category.name == "SavingGoals":
+                        name = newTransaction.description.replace("Saving to ", "")
+                        saving = SavingsGoal.objects.get(name=name, user=request.user)
+                        saving.current_amount += newTransaction.amount
+                        saving.save()
+                        notification = Notify(transaction=newTransaction, saving=saving, user=request.user)
+                    else:
+                        notification = Notify(transaction=newTransaction, user=request.user)
+                    notification.execute()
+                    return redirect("/account/transaction/")
+            except ObjectDoesNotExist:
+                messages.error(request, "Saving Not Found")
+                return render(request, 'transaction/transactionForm.html', {
+                    "form": form,
+                    "tag": "Edit",
+                    "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+                    "path": request.path
+                    })
+            except Exception as e:
+                messages.error(request, "Something went wrong during registration. Please try again.")
+                return render(request, 'transaction/transactionForm.html', {
+                    "form": form,
+                    "tag": "Edit",
+                    "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+                    "path": request.path
+                    })
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Add",
@@ -370,27 +388,45 @@ class EditTransactionView(LoginRequiredMixin, View):
             })
     
     def post(self, request, transaction_id):
-        transaction = Transaction.objects.get(pk=transaction_id)
-        old_amount = transaction.amount
+        newTransaction = Transaction.objects.get(pk=transaction_id)
+        old_amount = newTransaction.amount
         initial_data = {
-            'description': transaction.description,
-            'transaction_type': transaction.transaction_type,
-            'category': transaction.category
+            'description': newTransaction.description,
+            'transaction_type': newTransaction.transaction_type,
+            'category': newTransaction.category
         }
-        form = TransactionForm(request.POST, instance=transaction, user=request.user, initial=initial_data)
+        form = TransactionForm(request.POST, instance=newTransaction, user=request.user, initial=initial_data)
         if form.is_valid():
-            updateTransaction = form.save()
-            if updateTransaction.description.startswith("Saving to") and updateTransaction.category.name == "SavingGoals":
-                name = updateTransaction.description.replace("Saving to ", "")
-                saving = SavingsGoal.objects.get(name=name, user=request.user)
-                saving.current_amount -= old_amount
-                saving.current_amount += updateTransaction.amount
-                saving.save()
-                notification = Notify(transaction=transaction, saving=saving, user=request.user)
-            else:
-                notification = Notify(transaction=transaction, user=request.user)
-            notification.execute()
-            return redirect("/account/transaction/")
+            try:
+                with transaction.atomic():
+                    updateTransaction = form.save()
+                    if updateTransaction.description.startswith("Saving to") and updateTransaction.category.name == "SavingGoals":
+                        name = updateTransaction.description.replace("Saving to ", "")
+                        saving = SavingsGoal.objects.get(name=name, user=request.user)
+                        saving.current_amount -= old_amount
+                        saving.current_amount += updateTransaction.amount
+                        saving.save()
+                        notification = Notify(transaction=newTransaction, saving=saving, user=request.user)
+                    else:
+                        notification = Notify(transaction=newTransaction, user=request.user)
+                    notification.execute()
+                    return redirect("/account/transaction/")
+            except ObjectDoesNotExist:
+                messages.error(request, "Saving Not Found")
+                return render(request, 'transaction/transactionForm.html', {
+                    "form": form,
+                    "tag": "Edit",
+                    "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+                    "path": request.path
+                    })
+            except Exception as e:
+                messages.error(request, "Something went wrong during registration. Please try again.")
+                return render(request, 'transaction/transactionForm.html', {
+                    "form": form,
+                    "tag": "Edit",
+                    "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+                    "path": request.path
+                    })
 
         return render(request, 'transaction/transactionForm.html', {
             "form": form,

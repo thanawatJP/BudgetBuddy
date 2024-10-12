@@ -60,6 +60,6 @@ class RegisterView(View):
                     return redirect('home')
             except Exception as e:
                 messages.error(request, "Something went wrong during registration. Please try again.")
-                return redirect('registration')
+                return render(request,'register.html', {"form":form})
 
         return render(request,'register.html', {"form":form})
