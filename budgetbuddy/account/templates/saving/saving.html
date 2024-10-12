@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}Saving{% endblock %}
-
+ 
 {% block content %}
  
 <main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-50 min-h-screen transition-all main">
@@ -41,7 +41,7 @@
     </div>
     {% comment %} if have budget {% endcomment %}
     {% else %}
-        <div class="p-4 grid grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4">
+        <div class="p-4 grid grid-cols-1 md:grid-cols-2 sm:grid-cols-1 gap-4">
         {% for saving in savings %}
                 <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
                     <div class="flex justify-between mb-6">

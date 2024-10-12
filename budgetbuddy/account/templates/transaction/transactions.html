@@ -40,7 +40,7 @@
     </div>
     <div class="px-6">
         <div class="p-4 bg-white rounded-md border border-dashed border-gray-200 p-4 mt-4 shadow-md shadow-black/5">
-            <div class="flex justify-between mb-4">
+            <div class="flex flex-col xl:flex-row space-y-4 xl:space-y-0 justify-between mb-4">
                 <div class="flex items-center">
                     <form action="{% url 'monthly-report' %}" method="get">
                         <input type="month" name="month-report" class="text-sm py-2 pl-4 pr-4 bg-white border border-gray-400 rounded-md focus:border-blue-500 outline-none appearance-none" />
@@ -50,27 +50,29 @@
                         </button>
                     </form>
                 </div>
-                <div class="flex items-center">
+                <div class="flex flex-col lg:flex-row space-y-4 lg:space-y-0">
                     <form action="" class="flex item-center pr-4" id="search-form">
-                        <input type="date" name="searchdate" class="text-sm py-2 pl-10 pr-10 bg-white border border-gray-400 rounded-md focus:border-blue-500 outline-none appearance-none mr-4" onchange="document.getElementById('search-form').submit()" value="{{ request.GET.searchdate }}">
+                        <input type="date" name="searchdate" class="w-1/2 text-sm py-2 pl-10 pr-10 bg-white border border-gray-400 rounded-md focus:border-blue-500 outline-none appearance-none mr-4" onchange="document.getElementById('search-form').submit()" value="{{ request.GET.searchdate }}">
                         <div class="relative flex">
-                            <input type="text" name="search" class="py-2 pr-4 pl-4 bg-white outline-none border border-gray-400 rounded-l-md text-sm focus:border-blue-500 mr-0" placeholder="Search..." value="{{ request.GET.search }}">
+                            <input type="text" name="search" class="w-3/4 py-2 pr-4 pl-4 bg-white outline-none border border-gray-400 rounded-l-md text-sm focus:border-blue-500 mr-0" placeholder="Search transaction name" value="{{ request.GET.search }}">
                             <button type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-r-md text-sm px-5 py-2">
                                 <i class="ri-search-line text-md text-white"></i>
                             </button>
                         </div>
                     </form>
-                    <a href="{% url 'transaction' %}" class="mr-4">
-                        <button type="button" class="py-2 px-4 text-white bg-rose-700 hover:bg-rose-600 hover:text-gray-300 rounded-md">
-                            <i class="ri-refresh-line text-md text-white"></i>
-                        </button>
-                    </a>   
-                    <a href="{% url 'addTransaction' %}">
-                        <button type="button" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
-                            <i class="ri-pencil-line"></i>
-                            Add New
-                        </button>
-                    </a>
+                    <div>
+                        <a href="{% url 'transaction' %}" class="mr-4">
+                            <button type="button" class="py-2 px-4 text-white bg-rose-700 hover:bg-rose-600 hover:text-gray-300 rounded-md">
+                                <i class="ri-refresh-line text-md text-white"></i>
+                            </button>
+                        </a>   
+                        <a href="{% url 'addTransaction' %}">
+                            <button type="button" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
+                                <i class="ri-pencil-line"></i>
+                                Add New
+                            </button>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="py-2 px-6 relative overflow-x-auto min-h-screen">

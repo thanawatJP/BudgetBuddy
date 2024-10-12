@@ -3,8 +3,16 @@
 
 {% comment %} <body class="text-green-900 font-inter"> {% endcomment %}
     <!-- start: Sidebar -->
+<button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+    <span class="sr-only">Open sidebar</span>
+    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+    </svg>
+</button>
+
+<aside id="default-sidebar" class="fixed left-0 top-0 w-64 h-screen bg-green-700 p-4 transition-transform -translate-x-full md:translate-x-0 z-50" aria-label="Sidebar">
     <div class="fixed left-0 top-0 w-64 h-full bg-green-700 p-4">
-        <a href="#" class="flex items-center pb-4 border-b border-b-green-600">
+        <a href="{% url 'home' %}" class="flex items-center pb-4 border-b border-b-green-600">
             <img src="{% static 'image/logo.jpg' %}" alt="" class="w-10 h-10 rounded object-cover">
             <span class="text-lg font-bold text-white ml-3">BudgetBuddy</span>
         </a>
@@ -21,20 +29,6 @@
                     <span class="text-sm">Transaction</span>
                 </a>
             </li>
-            {% comment %} <li class="mb-1 group"></li>
-                <a href="{% url 'transaction' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
-                    <i class="ri-file-chart-line mr-3 text-xl"></i>
-                    <span class="text-sm">Transaction</span>
-                </a>
-                <ul class="pl-8 mt-2 sidebar-menu">
-                    <li class="mb-3">
-                        <a href="#" class="text-white text-sm flex items-center hover:text-gray-100 before:contents-[' '] before:w-1 before:h-1 before:rounded-full before:bg-white before:mr-3">Income</a>
-                    </li>
-                    <li class="mb-3"></li>
-                        <a href="#" class="text-white text-sm flex items-center hover:text-gray-100 before:contents-[' '] before:w-1 before:h-1 before:rounded-full before:bg-white before:mr-3">Expense</a>
-                    </li>
-                </ul>
-            </li> {% endcomment %}
             <li class="mb-1 {% if path|starts_with:'/account/budget/' %}group active{% endif %}">
                 <a href="{% url 'budget' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-hand-coin-line mr-3 text-xl"></i>
@@ -66,12 +60,14 @@
                     {% endif %}
                 </a>
             </li>
+            {% if perms.category.view_category %}
             <li class="mb-1 {% if path|starts_with:'/account/developer/' %}group active{% endif %}">
                 <a href="{% url 'categoriesDev' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
                     <i class="ri-admin-line mr-3 text-xl"></i>
                     <span class="text-sm">Developer</span>
                 </a>
             </li>
+            {% endif %}
         </ul>
         <ul class="absolute bottom-4 left-4">
             <li>
@@ -88,5 +84,23 @@
             </li>
         </ul>
     </div>
+</aside>
 
 <script src="{% static 'js/script.js' %}"></script>
+
+
+
+            {% comment %} <li class="mb-1 group"></li>
+                <a href="{% url 'transaction' %}" class="flex items-center py-2 px-4 text-white hover:bg-green-600 hover:text-gray-100 rounded-md group-[.active]:bg-green-900 group-[.active]:text-white">
+                    <i class="ri-file-chart-line mr-3 text-xl"></i>
+                    <span class="text-sm">Transaction</span>
+                </a>
+                <ul class="pl-8 mt-2 sidebar-menu">
+                    <li class="mb-3">
+                        <a href="#" class="text-white text-sm flex items-center hover:text-gray-100 before:contents-[' '] before:w-1 before:h-1 before:rounded-full before:bg-white before:mr-3">Income</a>
+                    </li>
+                    <li class="mb-3"></li>
+                        <a href="#" class="text-white text-sm flex items-center hover:text-gray-100 before:contents-[' '] before:w-1 before:h-1 before:rounded-full before:bg-white before:mr-3">Expense</a>
+                    </li>
+                </ul>
+            </li> {% endcomment %}

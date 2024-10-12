@@ -8,59 +8,57 @@
 <div class="item">
     <form method="POST" action="{% url 'register' %}">
         {% csrf_token %}
+        {% if messages %}
+        <div style="color: red;">
+            <ul>
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
         <div>
             <label for="email">Email</label>
-            {% if form.errors %}
-            <input type="text" id="email" name="email" required style="border-color: red;">
-            <div style="color: red;">
-                {% for field, errors in form.errors.items %}
-                    {% if field|stringformat:"s" == "email" %}
-                        {% for error in errors %}
-                            {{ error }}
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            </div>
-            {% else %}
-            <input type="text" id="email" name="email" required>
+            <input type="text" id="email" name="email" required {% if form.errors.email %}style="border-color: red;" {% endif %}>
+            {% if form.errors.email %}
+                <div style="color: red;">
+                    {% for error in form.errors.email %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
             {% endif %}
         </div>
         <div>
             <label for="username">Username</label>
-            {% if form.errors %}
-            <input type="text" id="username" name="username" required style="border-color: red;">
-            <div style="color: red;">
-                {% for field, errors in form.errors.items %}
-                    {% if field|stringformat:"s" == "username" %}
-                        {% for error in errors %}
-                            {{ error }}
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            </div>
-            {% else %}
-            <input type="text" id="username" name="username" required>
+            <input type="text" id="username" name="username" required {% if form.errors.username %}style="border-color: red;" {% endif %}>
+            {% if form.errors.username %}
+                <div style="color: red;">
+                    {% for error in form.errors.username %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
             {% endif %}
         </div>
         <div>
             <label for="password1">Password</label>
-            <input type="password" id="password1" name="password1" required>
+            <input type="password" id="password1" name="password1" required {% if form.errors.password1 %}style="border-color: red;" {% endif %}>
+            {% if form.errors.password1 %}
+                <div style="color: red;">
+                {% for error in form.errors.password1 %}
+                    {{ error }}
+                {% endfor %}
+                </div>
+            {% endif %}
         </div>
         <div>
             <label for="password2">Confirm Password</label>
-            {% if form.errors %}
-            <input type="password" id="password2" name="password2" required style="border-color: red;">
+            <input type="password" id="password2" name="password2" required {% if form.errors.password2 %}style="border-color: red;" {% endif %}>
+            {% if form.errors.password2 %}
                 <div style="color: red;">
-                    {% for field, errors in form.errors.items %}
-                        {% if field|stringformat:"s" == "password2" %}
-                            {% for error in errors %}
-                                {{ error }}
-                            {% endfor %}
-                        {% endif %}
-                    {% endfor %}
+                {% for error in form.errors.password2 %}
+                    {{ error }}
+                {% endfor %}
                 </div>
-            {% else %}
-            <input type="password" id="password2" name="password2" required>
             {% endif %}
         </div>
         
@@ -70,42 +68,3 @@
     <a href="{% url 'login' %}">Already have an account?</a>
 </div>
 {% endblock %}
-
-{% comment %} {% if form.errors %}
-    <div style="color: red;">
-        {% for field, errors in form.errors.items %}
-            {% if field|stringformat:"s" == "username" %}
-                {% for error in errors %}
-                    {{ error }}
-                {% endfor %}
-            {% endif %}
-        {% endfor %}
-    </div>
-{% endif %} {% endcomment %}
-
-
-<!-- <label for="username">Email Address</label>
-<input type="text" id="Email" />
-<label for="username">Username</label>
-<input type="text" id="username" />
-<label for="password">Password</label>
-<input type="password" id="password" />
-<label for="password">Confirm Password</label>
-<input type="password" id="confirm-password" />
-<button style="margin-top: 20px;">Register</button>
-<hr />
-<a href="{% url 'login' %}">Already have an account?</a> -->
-
-<!-- {% for field in form %}
-<div class="fieldWrapper">
-    {{ field.label_tag }} {{ field }}
-    <div style="color: red;">
-        {{ field.errors }}
-    </div>
-    {% if field.help_text %}
-    <p class="help" id="{{ field.auto_id }}_helptext">
-        {{ field.help_text|safe }}
-    </p>
-    {% endif %}
-</div>
-{% endfor %} -->

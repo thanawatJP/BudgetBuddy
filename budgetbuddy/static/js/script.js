@@ -1,69 +1,3 @@
-//start: sidebar
-// document.querySelectorAll('.sidebar-dropdown').forEach(function(item){
-    
-// })
-//end: sidebar
-
-// new Chart(document.getElementById('doughnut-chart'), {
-//     type: 'doughnut',
-//     data: {
-//         labels: ['Income', 'Expense'], // ระบุชื่อข้อมูล
-//         datasets: [{
-//             data: [179200, 128500], // ข้อมูลของ Income และ Expense
-//             backgroundColor: ['rgb(34, 197, 94)', 'rgb(244, 63, 94)'], // สีเขียวสำหรับ Income, สีแดงสำหรับ Expense
-//             borderColor: ['rgb(34, 197, 94)', 'rgb(244, 63, 94)'], // สีขอบ
-//             borderWidth: 1 // ความกว้างของเส้นขอบ
-//         }]
-//     },
-//     options: {
-//         responsive: true, // ทำให้กราฟตอบสนองต่อขนาดหน้าจอ
-//         plugins: {
-//             legend: {
-//                 position: 'top', // กำหนดตำแหน่งของตำนาน (legend)
-//             },
-//             tooltip: {
-//                 enabled: true, // เปิดการแสดง tooltip เมื่อ hover บนชิ้นกราฟ
-//             }
-//         }
-//     }
-// });
-
-// new Chart(document.getElementById('order-chart'), {
-//     type: 'line',
-//     data: {
-//         labels: generateNMonths(7),
-//         datasets: [
-//             {
-//                 label: 'Income',
-//                 data: generateRandomData(7),
-//                 borderWidth: 1,
-//                 fill: true,
-//                 pointBackgroundColor: 'rgb(34, 197, 94)',
-//                 borderColor: 'rgb(34, 197, 94)',
-//                 backgroundColor: 'rgba(34, 197, 94, 0.1)',
-//                 tension: .2
-//             },
-//             {
-//                 label: 'Expense',
-//                 data: generateRandomData(7),
-//                 borderWidth: 1,
-//                 fill: true,
-//                 pointBackgroundColor: 'rgb(255, 99, 132)',
-//                 borderColor: 'rgb(255, 99, 132)',    
-//                 backgroundColor: 'rgba(255, 99, 132, 0.1)',
-//                 tension: .2
-//             }
-//         ]
-//     },
-//     options: {
-//         scales: {
-//             y: {
-//                 beginAtZero: true
-//             }
-//         }
-//     }
-// });
-
 function generateRandomData(n) {
     const data = [];
     for (let i = 0; i < n; i++) {
@@ -73,6 +7,22 @@ function generateRandomData(n) {
     return data;
 }
 
-// // start: Popper
-// ย้ายไป popperScript.js
-// // end: Popper
+// เรียกใช้เมื่อคลิกปุ่มเพื่อเปิด/ปิด sidebar
+document.querySelector('[data-drawer-toggle]').addEventListener('click', function() {
+    const sidebar = document.getElementById('default-sidebar');
+    sidebar.classList.toggle('-translate-x-full'); // ใช้ toggle เพื่อเลื่อน sidebar เข้า/ออก
+});
+
+// เรียกใช้เมื่อคลิกนอก sidebar
+document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('default-sidebar');
+    const toggleButton = document.querySelector('[data-drawer-toggle]');
+
+    // ตรวจสอบว่าไม่ได้คลิกที่ sidebar และไม่ได้คลิกที่ปุ่ม toggle
+    if (!sidebar.contains(event.target) && !toggleButton.contains(event.target)) {
+        // ถ้า sidebar ยังเปิดอยู่ ก็ปิด sidebar
+        if (!sidebar.classList.contains('-translate-x-full')) {
+            sidebar.classList.add('-translate-x-full');
+        }
+    }
+});

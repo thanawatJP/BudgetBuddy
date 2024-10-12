@@ -44,6 +44,10 @@ urlpatterns = [
     path('account/developer/tags/delete/<int:tag_id>/', TagsDevView.as_view(), name="deleteTagDev"),
     path('account/developer/tags/add', AddTagsDevView.as_view(), name="addTagsDev"),
     path('account/developer/tags/edit/<int:tag_id>/', EditTagsDevView.as_view(), name="editTagDev"),
+    ## staff
+    path('account/developer/staffs/', StaffDevView.as_view(), name="staffDev"),
+    path('account/developer/staffs/add/<int:user_id>/', StaffDevView.as_view(), name="addStaffDev"),
+    path('account/developer/staffs/delete/<int:user_id>/', StaffDevView.as_view(), name="delStaffDev"),
 
     #PDF FILE
     path('account/monthlyreport/', ViewPDF.as_view(), name="monthly-report"),

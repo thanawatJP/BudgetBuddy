@@ -4,7 +4,7 @@ from django.db.models import *
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.paginator import Paginator
 from django.db.models.functions import TruncMonth
 from datetime import datetime, timedelta
@@ -15,9 +15,13 @@ from io import BytesIO
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.db import transaction
+
 
 #Opens up page as PDF
-class ViewPDF(View):
+class ViewPDF(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def render_to_pdf(self, template_src, context_dict={}):
         template = get_template(template_src)
         html = template.render(context_dict)
@@ -112,10 +116,12 @@ class ViewPDF(View):
 class IndexView(View):
     def get(self, request):
         return render(request, 'index.html', {
+            'request': request,
             'path': request.path
         })
 
-class HomeView(View):
+class HomeView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def ensure_six_elements(self, data_list):
         # ตรวจสอบว่า list มีสมาชิกครบ 6 ตัวมั้ย
         while len(data_list) < 6:
@@ -236,10 +242,11 @@ class HomeView(View):
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             'path': request.path
         }
-        return render(request, 'test.html', context)
+        return render(request, 'home.html', context)
 
 #report zone view
-class TransactionView(View):
+class TransactionView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request):
         accounts = Account.objects.filter(user=request.user)
         categories = Category.objects.all()
@@ -303,7 +310,8 @@ class TransactionView(View):
         except:
             return JsonResponse({"status": 500})
 
-class AddTransactionView(View):
+class AddTransactionView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request):
         initial_data = {
             'description': request.GET.get('description', ''),
@@ -344,7 +352,8 @@ class AddTransactionView(View):
             "path": request.path
             })
 
-class EditTransactionView(View):
+class EditTransactionView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request, transaction_id):
         transaction = Transaction.objects.get(pk=transaction_id)
         initial_data = {
@@ -391,7 +400,8 @@ class EditTransactionView(View):
             })
 
 #budget zone view
-class BudgetView(View):
+class BudgetView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request):
         budgets = Budget.objects.filter(user=request.user)
         for budget in budgets:
@@ -415,7 +425,8 @@ class BudgetView(View):
         except:
             return JsonResponse({"status": 500})
 
-class AddBudgetView(View):
+class AddBudgetView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request):
         form = BudgetForm(user=request.user)
         return render(request, 'budget/budgetForm.html', {
@@ -439,7 +450,8 @@ class AddBudgetView(View):
             "path": request.path
             })
 
-class EditBudgetView(View):
+class EditBudgetView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request, budget_id):
         budget = Budget.objects.get(id=budget_id)
         form = BudgetForm(instance=budget)
@@ -467,7 +479,8 @@ class EditBudgetView(View):
             })
 
 #saving zone view
-class SavingView(View):
+class SavingView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request):
         savings = SavingsGoal.objects.filter(user=request.user)
         for saving in savings:
@@ -487,7 +500,8 @@ class SavingView(View):
         except:
             return JsonResponse({"status": 500})
 
-class AddSavingView(View):
+class AddSavingView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request):
         form = SavingForm(user=request.user)
         return render(request, 'saving/savingForm.html', {
@@ -511,7 +525,8 @@ class AddSavingView(View):
             "path": request.path
             })
 
-class EditSavingView(View):
+class EditSavingView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request, saving_id):
         saving = SavingsGoal.objects.get(pk=saving_id)
         form = SavingForm(instance=saving, user=request.user)
@@ -538,7 +553,8 @@ class EditSavingView(View):
             })
 
 #account zone view
-class AccountView(View):
+class AccountView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request):
         accounts = Account.objects.filter(user=request.user)
         for account in accounts:
@@ -572,7 +588,8 @@ class AccountView(View):
         except:
             return JsonResponse({"status": 500})
 
-class AddAccountView(View):
+class AddAccountView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request):
         form = AccountForm(user=request.user)
         return render(request, 'account/accountForm.html', {
@@ -596,7 +613,8 @@ class AddAccountView(View):
             "path": request.path
             })
 
-class EditAccountView(View):
+class EditAccountView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request, account_id):
         account = Account.objects.get(pk=account_id)
         form = AccountForm(instance=account, user=request.user)
@@ -624,7 +642,8 @@ class EditAccountView(View):
 
 
 #notify zone view
-class NotifyView(View):
+class NotifyView(LoginRequiredMixin, View):
+    login_url = "/authen/"
     def get(self, request):
         # อัปเดต is_read เป็น True สำหรับ notifications ที่ยังไม่ได้อ่าน
         Notification.objects.filter(user=request.user).update(is_read=True)
@@ -647,11 +666,73 @@ class NotifyView(View):
         except:
             return JsonResponse({"status": 500})
 
+class EditProfileView(LoginRequiredMixin, View):
+    login_url = "/authen/"
+    def get(self, request):
+        user = request.user
+        form = EditProfileForm()
+        context = {
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+            'path': request.path,
+            'user': user,
+            'form': form
+        }
+        return render(request, 'setting/editprofile.html', context)
+
+    def post(self, request):
+        user = request.user
+        form = EditProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('edit-profile')
+        context = {
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+            'path': request.path,
+            'user': user,
+            'form': form
+        }
+        return render(request, 'setting/editprofile.html', context)
+
+class ResetPassWordView(LoginRequiredMixin, View):
+    login_url = "/authen/"
+    def get(self, request):
+        user = request.user
+        form = ResetPasswordForm()
+        context = {
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+            'path': request.path,
+            'form': form,
+            'user': user
+        }
+        return render(request, 'setting/resetpassword.html', context)
+    
+    def post(self, request):
+        user = request.user
+        form = ResetPasswordForm(request.POST, instance=user)
+        if form.is_valid():
+            new_password = form.cleaned_data['new_password']
+            request.user.set_password(new_password)
+            request.user.save()
+            login(request, request.user)
+            messages.success(request, "Reset password successfully!")
+            return redirect('edit-profile')
+        context = {
+                "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+                'path': request.path,
+                'user': user,
+                'form': form
+            }
+        return render(request, 'setting/resetpassword.html', context)
+
 
 
 #developer zone view
 ## categories
-class CategoriesDevView(View):
+class CategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = "/authen/"
+    permission_required = ["category.view_category"]
     def get(self, request):
         categories = Category.objects.all()
         paginator = Paginator(categories, 10)
@@ -671,7 +752,9 @@ class CategoriesDevView(View):
         except:
             return JsonResponse({"status": 500})
     
-class AddCategoriesDevView(View):
+class AddCategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = "/authen/"
+    permission_required = ["category.add_category"]
     def get(self, request):
         form = CategoryDevForm()
         return render(request, 'developer/categoriesForm.html', {
@@ -695,7 +778,9 @@ class AddCategoriesDevView(View):
             "path": request.path
             })
 
-class EditCategoriesDevView(View):
+class EditCategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = "/authen/"
+    permission_required = ["category.change_category"]
     def get(self, request, category_id):
         category = Category.objects.get(pk=category_id)
         form = CategoryDevForm(instance=category)
@@ -722,7 +807,9 @@ class EditCategoriesDevView(View):
             })
 
 ## tags
-class TagsDevView(View):
+class TagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = "/authen/"
+    permission_required = ["tag.view_tag"]
     def get(self, request):
         tags = Tag.objects.all()
         paginator = Paginator(tags, 10)
@@ -742,7 +829,9 @@ class TagsDevView(View):
         except:
             return JsonResponse({"status": 500})
     
-class AddTagsDevView(View):
+class AddTagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = "/authen/"
+    permission_required = ["tag.add_tag"]
     def get(self, request):
         form = TagDevForm()
         return render(request, 'developer/tagsForm.html',{
@@ -766,7 +855,9 @@ class AddTagsDevView(View):
             "path": request.path
             })
 
-class EditTagsDevView(View):
+class EditTagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = "/authen/"
+    permission_required = ["tag.change_tag"]
     def get(self, request, tag_id):
         tag = Tag.objects.get(pk=tag_id)
         form = TagDevForm(instance=tag)
@@ -792,55 +883,39 @@ class EditTagsDevView(View):
             "path": request.path
             })
 
-class EditProfileView(View):
+class StaffDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    login_url = "/authen/"
+    permission_required = ["category.view_category", "tag.view_tag"]
     def get(self, request):
-        user = request.user
-        form = EditProfileForm()
-        context = {
-            'path': request.path,
-            'user': user,
-            'form': form
-        }
-        return render(request, 'setting/editprofile.html', context)
+        group = Group.objects.get(name='staff')
+        staffs = group.user_set.all()
+        users = User.objects.exclude(groups=group)
+        return render(request, 'developer/staff.html', {
+            "staffs": staffs,
+            "users": users,
+            "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
+            "path": request.path
+            })
 
-    def post(self, request):
-        user = request.user
-        form = EditProfileForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('edit-profile')
-        context = {
-            'path': request.path,
-            'user': user,
-            'form': form
-        }
-        return render(request, 'setting/editprofile.html', context)
-
-class ResetPassWordView(View):
-    def get(self, request):
-        user = request.user
-        form = ResetPasswordForm()
-        context = {
-            'path': request.path,
-            'form': form,
-            'user': user
-        }
-        return render(request, 'setting/resetpassword.html', context)
-    
-    def post(self, request):
-        user = request.user
-        form = ResetPasswordForm(request.POST, instance=user)
-        if form.is_valid():
-            new_password = form.cleaned_data['new_password']
-            request.user.set_password(new_password)
-            request.user.save()
-            login(request, request.user)
-            messages.success(request, "Reset password successfully!")
-            return redirect('edit-profile')
-        context = {
-                'path': request.path,
-                'user': user,
-                'form': form
-            }
-        return render(request, 'setting/resetpassword.html', context)
+    def post(self, request, user_id):
+        try:
+            user = User.objects.get(pk=user_id)
+            group = Group.objects.get(name='staff')
+            group.user_set.add(user)
+            return JsonResponse({"status": 200})
+        except User.DoesNotExist:
+            return JsonResponse({"status": 404, "message": "User not found."})
+        except Group.DoesNotExist:
+            return JsonResponse({"status": 404, "message": "Group not found."})
+        except Exception as e:
+            # Handle any other exceptions
+            return JsonResponse({"status": 500, "message": str(e)})
+        
+    def delete(self, request, user_id):
+        try:
+            user = User.objects.get(pk=user_id)
+            group = Group.objects.get(name='staff')
+            user.groups.remove(group)
+            return JsonResponse({"status": 200})
+        except:
+            return JsonResponse({"status": 500})

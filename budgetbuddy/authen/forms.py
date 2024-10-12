@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.forms import ModelForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 class RegisterationForm(UserCreationForm):
     # email = forms.EmailField()
@@ -20,16 +21,6 @@ class RegisterationForm(UserCreationForm):
         user_count = User.objects.filter(email=email).count()
         if user_count > 0:
             msg = "Your email have been use"
-            self.add_error("email", msg)
+            raise ValidationError("This email is already in use.")
 
         return email
-
-class ResetpasswordForm(SetPasswordForm):
-    # email = forms.CharField()
-
-    class Meta:
-        model = User
-        fields = [
-            "email",
-            "username",
-        ]

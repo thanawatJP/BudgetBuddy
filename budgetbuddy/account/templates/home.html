@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block content %}
+  <!-- start: Main -->
+  <main class="w-full md:w-[calc(100%-256px)] md:ml-64 bg-gray-50 min-h-screen transition-all main">
+    <!-- start: ez-nav -->
+    <div class="py-2 px-6 bg-white flex items-center shadow-md shadow-black/5 sticky top-0 left-0 z-30 pt-3 pb-3">
+      <ul class="flex items-center text-sm ml-4">
+        <li class="mr-2">
+          <a href="{% url 'home' %}" class="text-gray-400 hover:text-gray-600 font-medium">BudgetBuddy</a>
+        </li>
+        <li class="text-gray-600 mr-2 font-medium">/</li>
+        <li class="text-gray-600 mr-2 font-medium">Home</li>
+      </ul>
+    </div>
+    <!-- end: ez-nav -->
+
+    <!-- start: welcome user -->
+    <div class="flex items-center p-6">
+      <img src="https://st3.depositphotos.com/15648834/17930/v/450/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="" class="w-16 rounded-full" />
+      <div class="">
+        <h1 class="pl-6 text-xl text-green-700">Hello, {{ user }}</h1>
+        <p class="pl-6 text-right text-gray-400">Welcome to the budgetbuddy</p>
+      </div>
+    </div>
+    <!-- end: welcome user -->
+
+    <div class="p-6">
+      <!-- start: cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
+        <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
+          <div class="flex items-center justify-between mb-6">
+            <i class="ri-cash-line text-8xl text-green-700"></i>
+            <div class="flex-grow text-right">
+              <!-- เพิ่ม text-right เพื่อจัดชิดขวา -->
+              <div class="text-2xl font-semibold mb-1">{{ total_income }} ฿</div>
+              <div class="text-sm font-medium text-gray-400">Total Income</div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
+          <div class="flex items-center justify-between mb-6">
+            <i class="ri-coins-line text-8xl text-green-700"></i>
+            <div class="flex-grow text-right">
+              <!-- เพิ่ม text-right เพื่อจัดชิดขวา -->
+              <div class="text-2xl font-semibold mb-1">{{ total_expense }} ฿</div>
+              <div class="text-sm font-medium text-gray-400">Total Expense</div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
+          <div class="flex items-center justify-between mb-6">
+            <i class="ri-safe-2-line text-8xl text-green-700"></i>
+            <div class="flex-grow text-right">
+              <!-- เพิ่ม text-right เพื่อจัดชิดขวา -->
+              <div class="text-2xl font-semibold mb-1">{{ total_savinggoals }}</div>
+              <div class="text-sm font-medium text-gray-400">SavingGoals</div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-md border border-gray-100 p-6 shadow-md shadow-black/5">
+          <div class="flex items-center justify-between mb-6">
+            <i class="ri-hand-coin-line text-8xl text-green-700"></i>
+            <div class="flex-grow text-right">
+              <!-- เพิ่ม text-right เพื่อจัดชิดขวา -->
+              <div class="text-2xl font-semibold mb-1">{{ total_budget }}</div>
+              <div class="text-sm font-medium text-gray-400">Budget</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- stop: cards -->
+      <!-- start: income&expense table -->
+      <div class="grid grid-cols-1 gap-6 mb-6">
+        <div class="bg-white border border-gray-100 shadow-md shadow-black/5 p-6 rounded-md">
+          <div class="flex justify-between mb-4 items-start">
+            <div class="font-medium">Income&Expense</div>
+          </div>
+          <form action="" class="flex items-center mb-4">
+            <div class="relative w-full mr-2">
+              <input type="text" class="py-2 pr-4 pl-10 bg-gray-50 w-full outline-none border border-gray-100 rounded-md text-sm focus:border-blue-500" placeholder="Search..." />
+              <i class="ri-search-line absolute top-1/2 left-4 -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <select name="account" id="accountSelect" class="text-sm py-2 pl-4 pr-10 bg-gray-50 border border-gray-100 rounded-tl-md rounded-bl-md focus:border-blue-500 outline-none appearance-none bg-select-arrow bg-no-repeat bg-[length:16px_16px] bg-[right_16px_center] h-[42px]">
+              <option value="all">All</option>
+              {% for account in user_accounts %}
+                {% if account.id|stringformat:'s' == selected_account_id %}
+                  <option value="{{ account.id }}" selected>{{ account.name|upper }}</option>
+                {% else %}
+                  <option value="{{ account.id }}">{{ account.name|upper }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            <button type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-tr-md rounded-br-md text-sm px-5 py-2.5 h-[42px] dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><i class="ri-search-line text-md text-white"></i></button>
+          </form>
+          <div class="overflow-x-auto mb-4">
+            <table class="w-full min-w-[540px]">
+              <thead>
+                <tr>
+                  <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left rounded-tl-md rounded-bl-md">create at</th>
+                  <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">account</th>
+                  <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">category</th>
+                  <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">amount</th>
+                  <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left">type</th>
+                  <th class="text-[12px] uppercase tracking-wide font-medium text-gray-400 py-2 px-4 bg-gray-50 text-left rounded-tr-md rounded-br-md"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for transaction in user_transactions %}
+                  <tr>
+                    <td class="py-2 px-4 border-b border-b-gray-50">
+                      <span class="text-[13px] font-medium text-gray-400">{{ transaction.create_at }}</span>
+                    </td>
+                    <td class="py-2 px-4 border-b border-b-gray-50">
+                      <span class="text-[13px] font-medium text-gray-400">{{ transaction.account }}</span>
+                    </td>
+                    <td class="py-2 px-4 border-b border-b-gray-50">
+                      <span class="text-[13px] font-medium text-gray-400">{{ transaction.category.name }}</span>
+                    </td>
+                    <td class="py-2 px-4 border-b border-b-gray-50">
+                      <span class="text-[13px] font-medium text-gray-400">{{ transaction.amount }}</span>
+                    </td>
+                    {% if transaction.transaction_type == 'income' %}
+                      <td class="py-2 px-4 border-b border-b-gray-50">
+                        <span class="inline-block p-1 rounded bg-emerald-500/10 text-emerald-500 font-medium text-[13px] leading-none">Income</span>
+                      </td>
+                    {% else %}
+                      <td class="py-2 px-4 border-b border-b-gray-50">
+                        <span class="inline-block p-1 rounded bg-rose-500/10 text-rose-500 font-medium text-[13px] leading-none">Expense</span>
+                      </td>
+                    {% endif %}
+                    <td class="py-2 px-4 border-b border-b-gray-50">
+                      <div class="dropdown">
+                        <button type="button" class="dropdown-toggle text-gray-400 hover:text-gray-600 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
+                        <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
+                          <li>
+                            <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Update</a>
+                          </li>
+                          <li>
+                            <a href="#" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination text-center text-gray-700">
+            <span class="step-links">
+              {% if user_transactions.has_previous %}
+                <a href="?page=1&account={{ selected_account_id }}" class="hover:text-gray-500">&laquo; first</a>
+                <a href="?page={{ user_transactions.previous_page_number }}&account={{ selected_account_id }}" class="hover:text-gray-500">previous</a>
+              {% endif %}
+
+              <span class="current">Page {{ user_transactions.number }} of {{ user_transactions.paginator.num_pages }}.</span>
+
+              {% if user_transactions.has_next %}
+                <a href="?page={{ user_transactions.next_page_number }}&account={{ selected_account_id }}" class="hover:text-gray-500">next</a>
+                <a href="?page={{ user_transactions.paginator.num_pages }}&account={{ selected_account_id }}" class="hover:text-gray-500">last &raquo;</a>
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+      <!-- end: income&expense table -->
+
+      <!-- start: graph -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 min-h-0">
+        <div class="bg-white border border-gray-100 shadow-md shadow-black/5 p-6 rounded-md lg:col-span-2">
+          <div class="flex justify-between mb-4 items-start">
+            <div class="font-medium">Mountly Income&Expense</div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-4">
+            <div class="rounded-md border border-dashed border-gray-200 p-4">
+              <div class="flex items-center mb-0.5">
+                {% if six_month_income_avg.average_income is not None %}
+                  <div class="text-xl font-semibold">{{ six_month_income_avg.average_income|floatformat:2 }}</div>
+                {% else %}
+                  <div class="text-xl font-semibold">0</div>
+                {% endif %}
+              </div>
+              <span class="text-sm p-1 rounded bg-emerald-500/10 text-emerald-500 font-medium text-[13px]">Average Income</span>
+            </div>
+            <div class="rounded-md border border-dashed border-gray-200 p-4">
+              <div class="flex items-center mb-0.5">
+                {% if six_month_expense_avg.average_expense is not None %}
+                  <div class="text-xl font-semibold">{{ six_month_expense_avg.average_expense|floatformat:2 }}</div>
+                {% else %}
+                  <div class="text-xl font-semibold">0</div>
+                {% endif %}
+              </div>
+              <span class="text-sm p-1 rounded bg-rose-500/10 text-rose-500 font-medium text-[13px]">Average Expense</span>
+            </div>
+          </div>
+          <div>
+            <canvas id="order-chart"></canvas>
+          </div>
+        </div>
+        <div class="bg-white border border-gray-100 shadow-md shadow-black/5 p-6 rounded-md">
+          <h1 class="font-medium">This month Income&Expense</h1>
+          <div class="grid grid-cols-2">
+            <div class="rounded-md border border-dashed border-gray-200 p-4 mt-4 mb-4 mr-2">
+              <div class="flex items-center mb-0.5">
+                {% if current_month_income_sum.sum_income is not None %}
+                  <div class="text-xl font-semibold">{{ current_month_income_sum.sum_income }}</div>
+                {% else %}
+                  <div class="text-xl font-semibold">0</div>
+                {% endif %}
+              </div>
+              <span class="text-sm p-1 rounded bg-emerald-500/10 text-emerald-500 font-medium text-[13px]">This month's income</span>
+            </div>
+            <div class="rounded-md border border-dashed border-gray-200 p-4 mt-4 mb-4 ml-2">
+              <div class="flex items-center mb-0.5">
+                {% if current_month_expense_sum.sum_expense is not None %}
+                  <div class="text-xl font-semibold">{{ current_month_expense_sum.sum_expense }}</div>
+                {% else %}
+                  <div class="text-xl font-semibold">0</div>
+                {% endif %}
+              </div>
+              <span class="text-sm p-1 rounded bg-rose-500/10 text-rose-500 font-medium text-[13px]">This month's Expense</span>
+            </div>
+          </div>
+          <div>
+            <canvas id="doughnut-chart"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- end: graph -->
+    </div>
+  </main>
+{% endblock %}
+{% block scripts %}
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'js/popperScript.js' %}"></script>
+  <script>
+        new Chart(document.getElementById('doughnut-chart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Income', 'Expense'], // ระบุชื่อข้อมูล
+                datasets: [{
+                    data: [{{current_month_income_sum.sum_income}}, {{current_month_expense_sum.sum_expense}}],  //ข้อมูลของ Income และ Expense
+                    backgroundColor: ['rgb(34, 197, 94)', 'rgb(244, 63, 94)'], // สีเขียวสำหรับ Income, สีแดงสำหรับ Expense
+                    borderColor: ['rgb(34, 197, 94)', 'rgb(244, 63, 94)'],
+                    borderWidth: 1 
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top', 
+                    },
+                    tooltip: {
+                        enabled: true,
+                    }
+                }
+            }
+        });
+
+        // Script กราฟเส้น
+        const month_1 = generateLastNMonths(6)
+        console.log(month_1)
+        new Chart(document.getElementById('order-chart'), {
+            type: 'line',
+            data: {
+                labels: month_1,
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: {{income_data}},
+                        borderWidth: 1,
+                        fill: true,
+                        pointBackgroundColor: 'rgb(34, 197, 94)',
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: .2
+                    },
+                    {
+                        label: 'Expense',
+                        data: {{expense_data}},
+                        borderWidth: 1,
+                        fill: true,
+                        pointBackgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',    
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        tension: .2
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function generateLastNMonths(n) {
+            const data = [];
+            const currentDate = new Date();
+
+            for (let i = 0; i < n; i++) {
+                const date = new Date(currentDate);
+                date.setMonth(currentDate.getMonth() - i);
+                data.push(date.toLocaleString('en-US', {
+                    month: 'short',
+                    year: 'numeric'
+                }));
+            }
+
+            return data.reverse();
+        }
+    </script>
+{% endblock %}

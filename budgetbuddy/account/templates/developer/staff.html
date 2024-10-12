@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Tags{% endblock %}
+{% block title %}Categories{% endblock %}
 
 {% block content %}
  
@@ -16,7 +16,7 @@
                 <a href="{% url 'categoriesDev' %}" class="text-gray-400 hover:text-gray-600 font-medium">Developer</a>
             </li>
             <li class="text-gray-600 mr-2 font-medium">/</li>
-            <li class="text-gray-600 mr-2 font-medium">Tags</li>
+            <li class="text-gray-600 mr-2 font-medium">Staff</li>
         </ul>
     </div>
 
@@ -26,31 +26,37 @@
                 <a href="{% url 'categoriesDev' %}" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Categories</a>
             </li>
             <li class="me-2">
-                <a href="{% url 'tagsDev' %}" class="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500" aria-current="page">Tags</a>
+                <a href="{% url 'tagsDev' %}" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Tags</a>
             </li>
             <li class="me-2">
-                <a href="{% url 'staffDev' %}" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300">Staff</a>
+                <a href="{% url 'staffDev' %}" class="inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500" aria-current="page">Staff</a>
             </li>
         </ul>
     </div>
 
-
     <div class="p-4 flex justify-end">
-        <a href="{% url 'addTagsDev' %}">
-            <button type="button" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
-                <i class="ri-pencil-line"></i>
-                Add New
-            </button>
-        </a>
+        <select id="user-select" name="user" class="block py-2 px-3 border border-gray-300 rounded-md">
+            <option value="" disabled selected>Select a user</option>
+            {% for user in users|dictsort:"id" %}
+                <option value="{{ user.id }}">{{ user.username }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" onclick="addStaff('{{csrf_token}}')" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md ml-5">
+            <i class="ri-pencil-line"></i>
+            Add Staff
+        </button>
     </div>
     
 
-    <div class="py-2 px-6 relative overflow-x-auto min-h-screen">
+    <div class="py-2 px-6 pb-5 relative overflow-x-auto">
         <table class="w-full text-sm text-left rtl:text-right">
             <thead class="text-sm text-white uppercase bg-green-700">
                 <tr>
                     <th scope="col" class="px-6 py-3">
                         No.
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Email
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Name
@@ -61,26 +67,21 @@
                 </tr>
             </thead>
             <tbody>
-                {% for tag in tags|dictsort:"id" %}
+                {% for staff in staffs|dictsort:"id" %}
                 <tr class="bg-white border-b">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {{ forloop.counter }}
                     </th>
                     <td class="px-6 py-4">
-                        {{ tag.name }}
+                        {{ staff.email }}
                     </td>
-                    <td class="py-2 px-4">
-                        <div class="dropdown">
-                            <button type="button" class="dropdown-toggle text-gray-600 hover:text-gray-800 text-sm w-6 h-6 rounded flex items-center justify-center bg-gray-50"><i class="ri-more-2-fill"></i></button>
-                            <ul class="dropdown-menu shadow-md shadow-black/5 z-30 hidden py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px]">
-                                <li>
-                                    <a href="{% url 'editTagDev' tag.id %}" class="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Update</a>
-                                </li>
-                                <li>
-                                    <button type="button" onclick="deleteTag({{ tag.id }}, '{{csrf_token}}')" class="delete w-full flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Delete</button>
-                                </li>
-                            </ul>
-                        </div>
+                    <td class="px-6 py-4">
+                        {{ staff.username }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <button type="button" onclick="deleteStaff({{ staff.id }}, '{{csrf_token}}')" class="delete w-full flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -89,18 +90,18 @@
         </table>
         <div class="pagination text-center text-gray-700 mt-4">
             <span class="step-links">
-                {% if tags.has_previous %}
+                {% if staffs.has_previous %}
                     <a href="?page=1" class="hover:text-gray-500">&laquo; first</a>
-                    <a href="?page={{ tags.previous_page_number }}" class="hover:text-gray-500">previous</a>
+                    <a href="?page={{ staffs.previous_page_number }}" class="hover:text-gray-500">previous</a>
                 {% endif %}
         
                 <span class="current">
-                    Page {{ tags.number }} of {{ tags.paginator.num_pages }}.
+                    Page {{ staffs.number }} of {{ staffs.paginator.num_pages }}.
                 </span>
         
-                {% if tags.has_next %}
-                    <a href="?page={{ tags.next_page_number }}" class="hover:text-gray-500">next</a>
-                    <a href="?page={{ tags.paginator.num_pages }}" class="hover:text-gray-500">last &raquo;</a>
+                {% if staffs.has_next %}
+                    <a href="?page={{ staffs.next_page_number }}" class="hover:text-gray-500">next</a>
+                    <a href="?page={{ staffs.paginator.num_pages }}" class="hover:text-gray-500">last &raquo;</a>
                 {% endif %}
             </span>
         </div>
@@ -113,6 +114,6 @@
 {% block scripts %}
 <script src="https://unpkg.com/@popperjs/core@2"></script>
 <script src="{% static 'js/popperScript.js' %}"></script>
-<script src="{% static 'js/devTagScript.js' %}"></script>
+<script src="{% static 'js/devStaffScript.js' %}"></script>
 {% endblock %}
 
