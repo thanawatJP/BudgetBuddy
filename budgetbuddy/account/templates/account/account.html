@@ -15,6 +15,7 @@
             <li class="text-gray-600 mr-2 font-medium">Account</li>
         </ul>
     </div>
+    
     <div class="p-4 flex justify-end">
         <a href="{% url 'addAccount' %}">
             <button type="button" class="py-2 px-4 text-white bg-green-700 hover:bg-green-600 hover:text-gray-300 rounded-md">
@@ -24,6 +25,19 @@
         </a>
     </div>
     
+    {% if messages %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 m-3 rounded flex justify-between" id="message-container">
+            <ul>
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            <svg class="fill-current h-6 w-6 text-red-500" role="button" onclick="closeMessage()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <title>Close</title>
+                <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+            </svg>
+        </div>
+    {% endif %}
 
     <div class="py-2 px-6 relative overflow-x-auto min-h-screen">
         <table class="w-full text-sm text-left rtl:text-right">

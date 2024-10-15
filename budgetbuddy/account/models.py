@@ -61,10 +61,12 @@ class Notification(models.Model):
         ('50b', '50% Budget Used'),
         ('75b', '75% Budget Used'),
         ('100b', '100% Budget Used'),
-        ('100s', '100% Saving Goal')
+        ('100s', '100% Saving Goal'),
+        ('7ds', '7 Day Left Saving Goal'),
+        ('1ds', '1 Day Left Saving Goal'),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    notify_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
+    notify_type = models.CharField(max_length=25, choices=TRANSACTION_TYPES)
     message = models.TextField()
     notification_date = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)

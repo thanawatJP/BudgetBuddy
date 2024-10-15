@@ -76,26 +76,26 @@ WSGI_APPLICATION = 'budgetbuddy.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "budgetbuddy",
-        "USER": "postgres",
-        "PASSWORD": "password",
-        "HOST": "localhost",
-        "PORT": "5432",
-    }
-}
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql",
 #         "NAME": "budgetbuddy",
 #         "USER": "postgres",
-#         "PASSWORD": "N55465495",
+#         "PASSWORD": "password",
 #         "HOST": "localhost",
 #         "PORT": "5432",
 #     }
 # }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "budgetbuddy",
+        "USER": "postgres",
+        "PASSWORD": "N55465495",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -147,7 +147,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_POST = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER ='nut59607@gmail.com' #email
-EMAIL_HOST_PASSWORD ='eiza bljj rysx bpml' #app passwrod
+EMAIL_HOST_PASSWORD ='eiza bljj rysx bpml' #app password
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

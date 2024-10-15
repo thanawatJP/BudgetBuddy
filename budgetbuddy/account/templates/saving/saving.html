@@ -49,7 +49,7 @@
                             <div class="flex justify-between">
                                 <div class="text-2xl font-semibold mb-1">{{ saving.name }}</div>
                                 <div class="flex">
-                                    <a href='{% url 'addTransaction' %}?description=Saving to {{ saving.name }}&category=SavingGoals&transaction_type=expense'>
+                                    <a href='{% url 'addTransaction' %}?description=Saving to {{ saving.name }}&account=SavingGoals&category=SavingGoals&transaction_type=income'>
                                         <button type="button" class="dropdown-toggle text-gray-600 hover:text-blue-800 text-md w-6 h-6 rounded flex items-center justify-center bg-gray-50 mr-3">
                                             <i class="ri-add-line"></i>
                                         </button>
@@ -79,7 +79,7 @@
                                 <div class="w-2 h-2 rounded-full bg-white ml-auto"></div>
                             </div>
                         </div>
-                        <span class="text-sm font-medium text-gray-600 ml-4">{{ saving.percent }}%</span>
+                        <span class="text-sm font-medium text-gray-600 ml-4">{{ saving.percent|floatformat:2 }}%</span>
                     </div>
                 </div>
             {% endfor %}

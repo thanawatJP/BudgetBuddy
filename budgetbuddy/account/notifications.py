@@ -1,6 +1,6 @@
-from account.models import Transaction, Notification, Budget, SavingsGoal
+from account.models import Transaction, Notification, Budget, SavingsGoal, Category
 from django.db.models import Sum
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 class Notify:
     # Check and Send Notification
@@ -38,28 +38,49 @@ class Notify:
                     return percent
         return 0
 
-    def send(self, percentBudget, percentSaving):
+    def checkSavingDate(self, saving):
+        if saving.target_date-date.today() == timedelta(days=7):
+            return 7
+        elif saving.target_date-date.today() == timedelta(days=1):
+            return 1
+        return 0
+
+    def send(self, *args, **kwargs):
+        percentBudget = kwargs.pop('percentBudget', None)
+        percentSaving = kwargs.pop('percentSaving', None)
+        leftSavingDay = kwargs.pop('leftSavingDay', None)
+        leftSavingName = kwargs.pop('leftSavingName', None)
         # ส่งการแจ้งเตือน
-        if percentBudget >= 100:
-            if (not (Notification.objects.filter(notification_date__month=datetime.now().month, user=self.user, notify_type="100% Budget Used", category=self.transaction.category).exists())):
-                message = f"หมวดหมู่ {self.transaction.category} ของคุณใช้เงินถึง 100% แล้ว ({(percentBudget/100)*self.budget}/{self.budget})"
-                Notification.objects.create(user=self.user, notify_type="100% Budget Used", message=message, category=self.transaction.category)
-        elif percentBudget >= 75:
-            if (not (Notification.objects.filter(notification_date__month=datetime.now().month, user=self.user, notify_type="75% Budget Used", category=self.transaction.category).exists())):
-                message = f"หมวดหมู่ {self.transaction.category} ของคุณใช้เงินถึง 75% แล้ว ({(percentBudget/100)*self.budget}/{self.budget})"
-                Notification.objects.create(user=self.user, notify_type="75% Budget Used", message=message, category=self.transaction.category)
-        elif percentBudget >= 50:
-            if (not (Notification.objects.filter(notification_date__month=datetime.now().month, user=self.user, notify_type="50% Budget Used", category=self.transaction.category).exists())):
-                message = f"หมวดหมู่ {self.transaction.category} ของคุณใช้เงินถึง 50% แล้ว ({(percentBudget/100)*self.budget}/{self.budget})"
-                Notification.objects.create(user=self.user, notify_type="50% Budget Used", message=message, category=self.transaction.category)
+        if percentBudget!=None:
+            if percentBudget >= 100:
+                if (not (Notification.objects.filter(notification_date__month=datetime.now().month, user=self.user, notify_type="100% Budget Used", category=self.transaction.category).exists())):
+                    message = f"หมวดหมู่ {self.transaction.category} ของคุณใช้เงินถึง 100% แล้ว ({(percentBudget/100)*self.budget}/{self.budget})"
+                    Notification.objects.create(user=self.user, notify_type="100% Budget Used", message=message, category=self.transaction.category)
+            elif percentBudget >= 75:
+                if (not (Notification.objects.filter(notification_date__month=datetime.now().month, user=self.user, notify_type="75% Budget Used", category=self.transaction.category).exists())):
+                    message = f"หมวดหมู่ {self.transaction.category} ของคุณใช้เงินถึง 75% แล้ว ({(percentBudget/100)*self.budget}/{self.budget})"
+                    Notification.objects.create(user=self.user, notify_type="75% Budget Used", message=message, category=self.transaction.category)
+            elif percentBudget >= 50:
+                if (not (Notification.objects.filter(notification_date__month=datetime.now().month, user=self.user, notify_type="50% Budget Used", category=self.transaction.category).exists())):
+                    message = f"หมวดหมู่ {self.transaction.category} ของคุณใช้เงินถึง 50% แล้ว ({(percentBudget/100)*self.budget}/{self.budget})"
+                    Notification.objects.create(user=self.user, notify_type="50% Budget Used", message=message, category=self.transaction.category)
 
-        if percentSaving >= 100:
-            if (not (Notification.objects.filter(notification_date__month=datetime.now().month, user=self.user, notify_type="100% Saving Goal", message__icontains=self.saving.name).exists())):
-                message = f"การออมเงิน {self.saving.name} ของคุณออมถึง 100% แล้ว ({self.saving.current_amount}/{self.saving.target_amount})"
-                Notification.objects.create(user=self.user, notify_type="100% Saving Goal", message=message, category=self.transaction.category)
+        if percentSaving!=None:
+            if percentSaving >= 100:
+                if (not (Notification.objects.filter(notification_date__month=datetime.now().month, user=self.user, notify_type="100% Saving Goal", message__icontains=self.saving.name).exists())):
+                    message = f"การออมเงิน {self.saving.name} ของคุณออมถึง 100% แล้ว ({self.saving.current_amount}/{self.saving.target_amount})"
+                    Notification.objects.create(user=self.user, notify_type="100% Saving Goal", message=message, category=self.transaction.category)
 
-    
-    
+        if (leftSavingName!=None and leftSavingDay!=None):
+            if leftSavingDay <= 1:
+                if (not (Notification.objects.filter(notification_date__month=datetime.now().month, user=self.user, notify_type="1 Day Left Saving Goal", message__icontains=leftSavingName).exists())):
+                    message = f"การออมเงิน {leftSavingName} ของคุณ เหลือเวลา 1 วัน"
+                    Notification.objects.create(user=self.user, notify_type="1 Day Left Saving Goal", message=message, category=Category.objects.get(name="SavingGoals"))
+            elif leftSavingDay <= 7:
+                if (not (Notification.objects.filter(notification_date__month=datetime.now().month, user=self.user, notify_type="7 Day Left Saving Goal", message__icontains=leftSavingName).exists())):
+                    message = f"การออมเงิน {leftSavingName} ของคุณ เหลือเวลา 7 วัน"
+                    Notification.objects.create(user=self.user, notify_type="7 Day Left Saving Goal", message=message, category=Category.objects.get(name="SavingGoals"))
+
     def execute(self):
         # เรียก check และ send
         percentBudget = self.checkBudget()
@@ -67,3 +88,10 @@ class Notify:
         if percentBudget >= 50 or percentSaving >= 100:
             self.send(percentBudget, percentSaving)
 
+        # time saving
+        savings = SavingsGoal.objects.filter(user=self.user)
+        for saving in savings:
+            leftSavingDay = self.checkSavingDate(saving)
+            leftSavingName = saving.name
+            if leftSavingDay >= 1:
+                self.send(leftSavingDay=leftSavingDay, leftSavingName=leftSavingName)

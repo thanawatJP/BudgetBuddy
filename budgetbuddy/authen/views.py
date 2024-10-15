@@ -50,6 +50,7 @@ class RegisterView(View):
                     newUser = form.save()
                     # create main account for user and add user to group
                     Account.objects.create(name="main", user=newUser)
+                    Account.objects.create(name="SavingGoals", user=newUser)
                     userGroup = Group.objects.get(name='user') 
                     userGroup.user_set.add(newUser)
 

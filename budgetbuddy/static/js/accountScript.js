@@ -7,9 +7,16 @@ function deleteAccount(account_id, csrf_token) {
             "X-CSRFToken": csrf_token,
         },
     })
-    .then((data) => {
-        console.log("Item deleted successfully");
-        window.location.reload();
-    })
-    .catch((error) => console.error("Error:", error));
+        .then((data) => {
+            console.log("Item deleted successfully");
+            window.location.reload();
+        })
+        .catch((error) => console.error("Error:", error));
+}
+
+function closeMessage() {
+    const messageDiv = document.getElementById('message-container');
+    if (messageDiv) {
+        messageDiv.style.display = 'none'; // ซ่อน div
+    }
 }
