@@ -232,8 +232,7 @@ class HomeView(LoginRequiredMixin, View):
         if current_month_expense_sum['sum_expense'] is None:
             current_month_expense_sum['sum_expense'] = 0
 
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
 
         context = {
             'user': user,
@@ -296,8 +295,7 @@ class TransactionView(LoginRequiredMixin, View):
         income = Transaction.objects.filter(account__in = accounts, create_at__day=datetime.now().day, transaction_type="income").aggregate(daily=Sum("amount"))
         expense = Transaction.objects.filter(account__in = accounts, create_at__day=datetime.now().day, transaction_type="expense").aggregate(daily=Sum("amount"))
         
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
 
         return render(request, 'transaction/transactions.html', {
             "transactions": transactions_list,
@@ -336,8 +334,7 @@ class AddTransactionView(LoginRequiredMixin, View):
             'category': request.GET.get('category', '')
         }
         form = TransactionForm(user=request.user, initial=initial_data)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Add",
@@ -370,20 +367,8 @@ class AddTransactionView(LoginRequiredMixin, View):
                     return redirect("/account/transaction/")
             except ObjectDoesNotExist:
                 messages.error(request, "Saving Not Found")
-                return render(request, 'transaction/transactionForm.html', {
-                    "form": form,
-                    "tag": "Edit",
-                    "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
-                    "path": request.path
-                    })
             except Exception as e:
                 messages.error(request, "Something went wrong during registration. Please try again.")
-                return render(request, 'transaction/transactionForm.html', {
-                    "form": form,
-                    "tag": "Edit",
-                    "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
-                    "path": request.path
-                    })
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Add",
@@ -402,8 +387,7 @@ class EditTransactionView(LoginRequiredMixin, View):
             'category': transaction.category
         }
         form = TransactionForm(instance=transaction, user=request.user, initial=initial_data)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Edit",
@@ -438,21 +422,8 @@ class EditTransactionView(LoginRequiredMixin, View):
                     return redirect("/account/transaction/")
             except ObjectDoesNotExist:
                 messages.error(request, "Saving Not Found")
-                return render(request, 'transaction/transactionForm.html', {
-                    "form": form,
-                    "tag": "Edit",
-                    "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
-                    "path": request.path
-                    })
             except Exception as e:
                 messages.error(request, "Something went wrong during registration. Please try again.")
-                return render(request, 'transaction/transactionForm.html', {
-                    "form": form,
-                    "tag": "Edit",
-                    "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
-                    "path": request.path
-                    })
-
         return render(request, 'transaction/transactionForm.html', {
             "form": form,
             "tag": "Edit",
@@ -472,8 +443,7 @@ class BudgetView(LoginRequiredMixin, View):
                 budget.expense = 0
             else:
                 budget.expense = transaction['expense']
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'budget/budget.html', {
             "budgets": budgets,
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
@@ -492,8 +462,7 @@ class AddBudgetView(LoginRequiredMixin, View):
     login_url = "/authen/"
     def get(self, request):
         form = BudgetForm(user=request.user)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'budget/budgetForm.html', {
             "form": form,
             "tag": "Add",
@@ -520,8 +489,7 @@ class EditBudgetView(LoginRequiredMixin, View):
     def get(self, request, budget_id):
         budget = Budget.objects.get(id=budget_id)
         form = BudgetForm(instance=budget)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'budget/budgetForm.html', {
             "form": form,
             "tag": "Edit",
@@ -551,8 +519,7 @@ class SavingView(LoginRequiredMixin, View):
         savings = SavingsGoal.objects.filter(user=request.user)
         for saving in savings:
             saving.percent = (saving.current_amount/saving.target_amount)*100
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'saving/saving.html', {
             "savings": savings,
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
@@ -571,8 +538,7 @@ class AddSavingView(LoginRequiredMixin, View):
     login_url = "/authen/"
     def get(self, request):
         form = SavingForm(user=request.user)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'saving/savingForm.html', {
             "form": form,
             "tag": "Add",
@@ -599,8 +565,7 @@ class EditSavingView(LoginRequiredMixin, View):
     def get(self, request, saving_id):
         saving = SavingsGoal.objects.get(pk=saving_id)
         form = SavingForm(instance=saving, user=request.user)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'saving/savingForm.html', {
             "form": form,
             "tag": "Add",
@@ -631,22 +596,12 @@ class AccountView(LoginRequiredMixin, View):
         for account in accounts:
             income = Transaction.objects.filter(account=account, transaction_type="income").aggregate(income=Sum("amount"))
             expense = Transaction.objects.filter(account=account, transaction_type="expense").aggregate(expense=Sum("amount"))
-            if income['income'] is None:
-                income = 0
-            else:
-                income = income['income']
-            if expense['expense'] is None:
-                expense = 0
-            else:
-                expense = expense['expense']
+            income = 0 if income['income'] is None else income['income']
+            expense = 0 if expense['expense'] is None else expense['expense']
             account.balance = income-expense
             lastestDate = Transaction.objects.filter(account=account).order_by('-create_at').first()
-            if lastestDate is None:
-                account.lastest = account.create_at
-            else:
-                account.lastest = lastestDate.create_at
-        notification = Notify(user=request.user)
-        notification.execute()
+            account.lastest = account.create_at if lastestDate is None else lastestDate.create_at
+        Notify(user=request.user).execute()
         return render(request, 'account/account.html', {
             "accounts": accounts,
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
@@ -669,8 +624,7 @@ class AddAccountView(LoginRequiredMixin, View):
     login_url = "/authen/"
     def get(self, request):
         form = AccountForm(user=request.user)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'account/accountForm.html', {
             "form": form,
             "tag": "Add",
@@ -696,8 +650,7 @@ class EditAccountView(LoginRequiredMixin, View):
     login_url = "/authen/"
     def get(self, request, account_id):
         account = Account.objects.get(pk=account_id)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         if (account.name=="SavingGoals"):
             messages.error(request, "Can't Edit SavingGoals Account")
             return redirect("/account/account/")
@@ -736,8 +689,7 @@ class NotifyView(LoginRequiredMixin, View):
         notifications = Notification.objects.filter(user=request.user, is_delete=False).order_by('-notification_date')
         for notification in notifications:
             notification.name = (notification.message.split(" "))[1]
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'notify.html', {
             "notifications": notifications,
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
@@ -760,8 +712,7 @@ class EditProfileView(LoginRequiredMixin, View):
         profile_picture = ProfilePicture.objects.get(user=user)
         print(profile_picture.image)
         form = EditProfileForm()
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         context = {
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             'path': request.path,
@@ -797,8 +748,7 @@ class ResetPassWordView(LoginRequiredMixin, View):
         user = request.user
         profile_picture = ProfilePicture.objects.get(user=user)
         form = ResetPasswordForm()
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         context = {
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
             'path': request.path,
@@ -836,8 +786,7 @@ class CategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
         paginator = Paginator(categories, 10)
         page_number = request.GET.get('page')
         categories_list = paginator.get_page(page_number)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'developer/categories.html', {
             "categories": categories_list,
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
@@ -856,8 +805,7 @@ class AddCategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     permission_required = ["category.add_category"]
     def get(self, request):
         form = CategoryDevForm()
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'developer/categoriesForm.html', {
             "form": form,
             "tag": "Add",
@@ -884,8 +832,7 @@ class EditCategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     def get(self, request, category_id):
         category = Category.objects.get(pk=category_id)
         form = CategoryDevForm(instance=category)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'developer/categoriesForm.html', {
             "form": form,
             "tag": "Edit",
@@ -916,8 +863,7 @@ class TagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
         paginator = Paginator(tags, 10)
         page_number = request.GET.get('page')
         tags_list = paginator.get_page(page_number)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'developer/tags.html', {
             "tags": tags_list,
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
@@ -936,8 +882,7 @@ class AddTagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     permission_required = ["tag.add_tag"]
     def get(self, request):
         form = TagDevForm()
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'developer/tagsForm.html',{
             "form": form,
             "tag": "Add",
@@ -962,8 +907,7 @@ class EditTagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     def get(self, request, tag_id):
         tag = Tag.objects.get(pk=tag_id)
         form = TagDevForm(instance=tag)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'developer/tagsForm.html',{
             "form": form,
             "tag": "Edit",
@@ -990,8 +934,7 @@ class StaffDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
         group = Group.objects.get(name='staff')
         staffs = group.user_set.all()
         users = User.objects.exclude(groups=group)
-        notification = Notify(user=request.user)
-        notification.execute()
+        Notify(user=request.user).execute()
         return render(request, 'developer/staff.html', {
             "staffs": staffs,
             "users": users,
@@ -1017,5 +960,5 @@ class StaffDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
             group = Group.objects.get(name='staff')
             user.groups.remove(group)
             return JsonResponse({"status": 200})
-        except:
-            return JsonResponse({"status": 500})
+        except Exception as e:
+            return JsonResponse({"status": 500, "message": str(e)})

@@ -18,11 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from account.views import IndexView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('authen/', include('authen.urls')),
-    path('', include('account.urls')),
+    path('account/', include('account.urls')),
+    path('', IndexView.as_view(), name="index"),
 ]
 
 if settings.DEBUG:
