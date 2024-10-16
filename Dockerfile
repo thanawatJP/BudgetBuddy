@@ -1,24 +1,21 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.11-slim
+# ใช้ Python 3.9 เป็น base image
+FROM python:3.9
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Set the working directory
+# ตั้ง working directory
 WORKDIR /app
 
-# Copy the requirements file
+# คัดลอกไฟล์ requirements.txt
 COPY requirements.txt /app/
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# ติดตั้ง dependencies   no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy the entire project to the working directory
+
+# คัดลอกไฟล์แอปทั้งหมดไปยัง working directory
 COPY . /app/
 
-# Expose the port the app runs on
+# เปิดพอร์ตที่ Django จะทำงาน
 EXPOSE 8000
 
-# Command to run the application
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# คำสั่งในการเริ่มแอป Django
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
