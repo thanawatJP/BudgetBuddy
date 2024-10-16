@@ -292,9 +292,9 @@ class TransactionView(LoginRequiredMixin, View):
         paginator = Paginator(transactions, 10)
         page_number = request.GET.get('page')
         transactions_list = paginator.get_page(page_number)
-        income = Transaction.objects.filter(account__in = accounts, create_at__day=datetime.now().day, transaction_type="income").aggregate(daily=Sum("amount"))
-        expense = Transaction.objects.filter(account__in = accounts, create_at__day=datetime.now().day, transaction_type="expense").aggregate(daily=Sum("amount"))
-        
+        income = Transaction.objects.filter(account__in = accounts, create_at__date=datetime.now().date(), transaction_type="income").aggregate(daily=Sum("amount"))
+        expense = Transaction.objects.filter(account__in = accounts, create_at__date=datetime.now().date(), transaction_type="expense").aggregate(daily=Sum("amount"))
+
         Notify(user=request.user).execute()
 
         return render(request, 'transaction/transactions.html', {
@@ -384,7 +384,7 @@ class EditTransactionView(LoginRequiredMixin, View):
             'description': transaction.description,
             'transaction_type': transaction.transaction_type,
             'account': transaction.account,
-            'category': transaction.category
+            'category': transaction.category,
         }
         form = TransactionForm(instance=transaction, user=request.user, initial=initial_data)
         Notify(user=request.user).execute()
@@ -402,7 +402,8 @@ class EditTransactionView(LoginRequiredMixin, View):
             'description': newTransaction.description,
             'transaction_type': newTransaction.transaction_type,
             'account': newTransaction.account,
-            'category': newTransaction.category
+            'category': newTransaction.category,
+            'user': request.GET.get('user', '')
         }
         form = TransactionForm(request.POST, instance=newTransaction, user=request.user, initial=initial_data)
         if form.is_valid():
@@ -523,7 +524,8 @@ class SavingView(LoginRequiredMixin, View):
         return render(request, 'saving/saving.html', {
             "savings": savings,
             "numNotify": Notification.objects.filter(user=request.user, is_read=False).count(),
-            "path": request.path
+            "path": request.path,
+            "user": request.user.username
         })
     
     def delete(self, request, saving_id):

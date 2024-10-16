@@ -86,7 +86,7 @@ class Notify:
         percentBudget = self.checkBudget()
         percentSaving = self.checkSaving()
         if percentBudget >= 50 or percentSaving >= 100:
-            self.send(percentBudget, percentSaving)
+            self.send(percentBudget=percentBudget, percentSaving=percentSaving)
 
         # time saving
         savings = SavingsGoal.objects.filter(user=self.user)

@@ -10,7 +10,7 @@
             <img src="{% static 'image/logo.jpg' %}" class="h-8" alt="BudgetBuddy Logo" />
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">BudgetBuddy</span>
         </a>
-        <div class="w-full md:block md:w-auto">
+        <div class="md:block md:w-auto">
             <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0">
             <li>
                 {% if request.user.is_authenticated %}
@@ -31,7 +31,7 @@
     <!-- Welcome Message -->
     <div class="text-center">
         <h2 class="text-4xl font-bold text-gray-700">ยินดีต้อนรับเข้าสู่ BudgetBuddy!</h2>
-        <p class="text-gray-500 mt-4">Your personal finance manager for managing transactions, savings goals, and generating insightful reports.</p>
+        <p class="text-gray-500 mt-4">ตัวช่วยในการจัดการรายรับรายจ่ายของคุณ ตั้งเป้าหมายการออม และตั้งงบประมาณในการใช้จ่ายของคุณ</p>
     </div>
 
     <!-- Functionality Overview Section -->
@@ -40,7 +40,7 @@
         <div class="bg-white p-6 rounded shadow-md text-center">
             <h3 class="text-2xl font-semibold text-gray-700">Manage Transactions</h3>
             <p class="text-gray-500 mt-4">
-                Track your income and expenses in detail. Add new transactions, categorize them, and monitor your spending over time. Stay on top of your finances!
+                ติดตามรายรับและรายจ่ายของคุณโดยละเอียด เพิ่มธุรกรรมใหม่ จัดหมวดหมู่ และตรวจสอบการใช้จ่ายของคุณเมื่อเวลาผ่านไป <strong>Stay on top of your finances!</strong>
             </p>
             <a href="{% url 'transaction' %}" class="mt-4 inline-block bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">View Transactions</a>
         </div>
@@ -49,7 +49,7 @@
         <div class="bg-white p-6 rounded shadow-md text-center">
             <h3 class="text-2xl font-semibold text-gray-700">Set Savings Goals</h3>
             <p class="text-gray-500 mt-4">
-                Set and track your savings goals. Whether you're saving for a new gadget or a vacation, you can track your progress and stay motivated!
+                กำหนดและติดตามเป้าหมายการออมของคุณ ไม่ว่าคุณจะออมเงินเพื่อซื้ออุปกรณ์ใหม่หรือไปเที่ยวพักผ่อน คุณสามารถติดตามความคืบหน้าและมีแรงบันดาลใจอยู่เสมอ!
             </p>
             <a href="{% url 'saving' %}" class="mt-4 inline-block bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Manage Savings Goals</a>
         </div>
@@ -58,7 +58,7 @@
         <div class="bg-white p-6 rounded shadow-md text-center">
             <h3 class="text-2xl font-semibold text-gray-700">Track Your Budget</h3>
             <p class="text-gray-500 mt-4">
-                Set up budgets for various categories like groceries, entertainment, and bills. Monitor your spending in real-time and get alerts when you’re nearing your limits.
+                กำหนดงบประมาณสำหรับหมวดหมู่ต่างๆ เช่น ของชำ ความบันเทิง และบิล ตรวจสอบการใช้จ่ายของคุณแบบเรียลไทม์และรับการแจ้งเตือนเมื่อคุณใกล้ถึงขีดจำกัด
             </p>
             <a href="{% url 'budget' %}" class="mt-4 inline-block bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">View Budgets</a>
         </div>
@@ -66,21 +66,21 @@
 
     <!-- Additional Features Section -->
     <div class="mt-16 text-center">
-        <h3 class="text-3xl font-bold text-gray-700">More Features</h3>
+        <h3 class="text-3xl font-bold text-gray-700">ฟีเจอร์อื่นๆ</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
             <!-- Budget Tracking -->
             <div class="bg-white p-6 rounded shadow-md">
                 <h4 class="text-xl font-semibold text-gray-700">Budget Tracking</h4>
                 <p class="text-gray-500 mt-4">
-                    Set up budgets for different spending categories and monitor your usage in real time. Receive alerts when you're close to exceeding your limits.
+                    กำหนดงบประมาณสำหรับหมวดหมู่การใช้จ่ายต่างๆ และติดตามการใช้งานของคุณแบบเรียลไทม์ รับการแจ้งเตือนเมื่อคุณใกล้จะเกินขีดจำกัดของคุณ
                 </p>
             </div>
 
             <!-- Notifications -->
             <div class="bg-white p-6 rounded shadow-md">
-                <h4 class="text-xl font-semibold text-gray-700">Real-Time Notifications</h4>
+                <h4 class="text-xl font-semibold text-gray-700">ระบบการแจ้งเตือน</h4>
                 <p class="text-gray-500 mt-4">
-                    Stay informed with real-time notifications about your transactions, savings progress, and budget limits. You'll never miss an important update!
+                    รับทราบข้อมูลด้วยการแจ้งเตือน เกี่ยวกับความคืบหน้าในการออม และขีดจำกัดงบประมาณ คุณจะไม่พลาดการอัปเดตที่สำคัญ!
                 </p>
             </div>
         </div>

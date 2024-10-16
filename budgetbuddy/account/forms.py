@@ -82,6 +82,7 @@ class TransactionForm(ModelForm):
         # Filter the account field to only show accounts for the current user
 
         request = kwargs.get('initial', {})
+
         if self.instance.pk is not None:
             # แก้ไข transaction เก่า สำหรับ saving
             description = self.instance.description
@@ -90,17 +91,18 @@ class TransactionForm(ModelForm):
             category = self.instance.category
 
             # หากตรงตามเงื่อนไขให้ล็อคฟิลด์
-            if description.startswith("Saving to") and account == Account.objects.get(name=account) and transaction_type == "income" and category == Category.objects.get(name=category):
+            if description.startswith("Saving to") and account == Account.objects.get(name=account, user=self.user) and transaction_type == "income" and category == Category.objects.get(name=category):
                 self.fields['description'].disabled = True
                 self.fields['transaction_type'].disabled = True
                 self.fields['account'].disabled = True
                 self.fields['category'].disabled = True
 
+        
         elif request['description']!='' and request['transaction_type']!='' and request['account']!='' and request['category']!='':
             # สร้าง transaction ใหม่ สำหรับ เพิ่มเงินใน saving บางบรรทัดอาจไม่จำเป็น(#) แค่ใส่เผื่อ
             self.initial['description'] = request.get('description', '') #
             self.initial['transaction_type'] = request.get('transaction_type', '') #
-            account = Account.objects.get(name=request.get('account', ''))
+            account = Account.objects.get(name=request.get('account', ''), user=self.user)
             self.initial['account'] = account
             category = Category.objects.get(name=request.get('category', ''))
             self.initial['category'] = category
