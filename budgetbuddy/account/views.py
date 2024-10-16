@@ -782,7 +782,7 @@ class ResetPassWordView(LoginRequiredMixin, View):
 ## categories
 class CategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = "/authen/"
-    permission_required = ["category.view_category"]
+    permission_required = ["account.view_category", "account.view_tag"]
     def get(self, request):
         categories = Category.objects.all()
         paginator = Paginator(categories, 10)
@@ -804,7 +804,7 @@ class CategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     
 class AddCategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = "/authen/"
-    permission_required = ["category.add_category"]
+    permission_required = ["account.add_category"]
     def get(self, request):
         form = CategoryDevForm()
         Notify(user=request.user).execute()
@@ -830,7 +830,7 @@ class AddCategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 class EditCategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = "/authen/"
-    permission_required = ["category.change_category"]
+    permission_required = ["account.change_category"]
     def get(self, request, category_id):
         category = Category.objects.get(pk=category_id)
         form = CategoryDevForm(instance=category)
@@ -859,7 +859,7 @@ class EditCategoriesDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
 ## tags
 class TagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = "/authen/"
-    permission_required = ["tag.view_tag"]
+    permission_required = ["account.view_category", "account.view_tag"]
     def get(self, request):
         tags = Tag.objects.all()
         paginator = Paginator(tags, 10)
@@ -881,7 +881,7 @@ class TagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     
 class AddTagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = "/authen/"
-    permission_required = ["tag.add_tag"]
+    permission_required = ["account.add_tag"]
     def get(self, request):
         form = TagDevForm()
         Notify(user=request.user).execute()
@@ -905,7 +905,7 @@ class AddTagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 class EditTagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = "/authen/"
-    permission_required = ["tag.change_tag"]
+    permission_required = ["account.change_tag"]
     def get(self, request, tag_id):
         tag = Tag.objects.get(pk=tag_id)
         form = TagDevForm(instance=tag)
@@ -931,7 +931,10 @@ class EditTagsDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 class StaffDevView(LoginRequiredMixin, PermissionRequiredMixin, View):
     login_url = "/authen/"
-    permission_required = ["category.view_category", "tag.view_tag"]
+    permission_required = ["account.view_category", "account.view_tag"]
+    def handle_no_permission(self):
+        # ทำการ redirect ไปยังหน้า home แทนการแสดงข้อความผิดพลาด
+        return redirect('home')
     def get(self, request):
         group = Group.objects.get(name='staff')
         staffs = group.user_set.all()
