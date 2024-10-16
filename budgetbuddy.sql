@@ -7,14 +7,15 @@ WORKDIR /app
 # คัดลอกไฟล์ requirements.txt
 COPY requirements.txt /app/
 
-# ติดตั้ง dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# ติดตั้ง dependencies   no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
 
 # คัดลอกไฟล์แอปทั้งหมดไปยัง working directory
 COPY . /app/
 
 # เปิดพอร์ตที่ Django จะทำงาน
-EXPOSE 8000
+EXPOSE /app/budgetbuddy
 
 # คำสั่งในการเริ่มแอป Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000]
